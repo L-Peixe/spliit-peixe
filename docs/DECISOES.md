@@ -79,7 +79,8 @@ funções. Spec: `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`.
 
 A foto é processada **na qualidade original** (para ler nota fiscal ou código de barras, que
 perdem nitidez em ângulo) e **guardada em WebP**, para ocupar pouco espaço. Armazenamento:
-Vercel Blob (o Claude cria, com autorização, quando a spec da parte C for aprovada).
+Vercel Blob **privado** (`spliit-peixe-fotos`, região `gru1`): a foto só abre por uma rota do app,
+porque nota fiscal pode trazer CPF — Lucas escolheu "Privado" contra "Público com link aleatório".
 **Descartado:** adiar a foto para depois da tela rápida.
 
 ## ADR-008 — Banco de preview: ramificação fixa do Neon, gerida pelo Claude

@@ -457,5 +457,52 @@
     "other": {
       "heading": "Outras moedas"
     }
+  },
+  "QuickExpense": {
+    "title": "Adicionar despesa",
+    "back": "Voltar",
+    "save": "Salvar",
+    "withYou": "Com você e:",
+    "allOf": "Todos de {group}",
+    "chooseGroup": "Escolher grupo",
+    "descriptionPlaceholder": "Insira a descrição",
+    "date": "Data",
+    "notes": "Nota",
+    "notesPlaceholder": "Nota (opcional)",
+    "you": "você",
+    "youCap": "Você",
+    "paidBySplit": "Pago por <strong>{payer}</strong> e dividido <strong>{split}</strong>",
+    "custom": "Pago por <strong>{payer}</strong> e dividido de forma personalizada",
+    "fullAmount": "<strong>{payer}</strong> tem o valor total a receber",
+    "paidShortcut": "{payer} pagou, dividir {split}",
+    "fullAmountShortcut": "{payer} tem o valor total a receber",
+    "more": "Mais opções",
+    "fullForm": "Formulário completo",
+    "descriptionRequired": "Insira a descrição (pelo menos 2 letras).",
+    "amountInvalid": "Insira um valor maior que zero.",
+    "saveFailed": "Não foi possível salvar. O que você digitou continua aqui; tente de novo.",
+    "WhoAreYou": {
+      "title": "Quem é você?",
+      "description": "Escolha quem é você neste grupo. As despesas saem pagas por você, e dá para trocar em cada uma."
+    },
+    "Adjust": {
+      "title": "Ajustar divisão",
+      "paidBy": "Pago por {payer}",
+      "EVENLY": "Igualmente",
+      "BY_AMOUNT": "Valores",
+      "BY_PERCENTAGE": "Porcentagem",
+      "BY_SHARES": "Partes",
+      "all": "Todos",
+      "footerEvenly": "{each}/pessoa ({count, plural, one {# pessoa} other {# pessoas}})",
+      "footerAmount": "{done} de {total}",
+      "footerPercent": "{done}% de 100% — {left}% restantes",
+      "footerShares": "{count} partes",
+      "done": "Pronto"
+    },
+    "sheetTitle": "Quem pagou?",
+    "fab": "Adicionar despesa",
+    "splitEvenly": "igualmente",
+    "splitShares": "por partes",
+    "amountSplitMismatch": "A divisão por valor não fecha com o valor da despesa. Toque na divisão e ajuste."
   }
 }

@@ -576,5 +576,52 @@
     "updateTitle": "Update available",
     "updateDescription": "A new version of Spliit is available.",
     "reload": "Reload"
+  },
+  "QuickExpense": {
+    "title": "Add expense",
+    "back": "Back",
+    "save": "Save",
+    "withYou": "With you and:",
+    "allOf": "Everyone in {group}",
+    "chooseGroup": "Choose group",
+    "descriptionPlaceholder": "Enter a description",
+    "date": "Date",
+    "notes": "Note",
+    "notesPlaceholder": "Note (optional)",
+    "you": "you",
+    "youCap": "You",
+    "paidBySplit": "Paid by <strong>{payer}</strong> and split <strong>{split}</strong>",
+    "custom": "Paid by <strong>{payer}</strong> and split a custom way",
+    "fullAmount": "<strong>{payer}</strong> {payer, select, you {are} other {is}} owed the full amount",
+    "paidShortcut": "{payer} paid, split {split}",
+    "fullAmountShortcut": "{payer} {payer, select, You {are} other {is}} owed the full amount",
+    "more": "More options",
+    "fullForm": "Full form",
+    "descriptionRequired": "Enter a description (at least 2 characters).",
+    "amountInvalid": "Enter an amount above zero.",
+    "saveFailed": "Could not save. What you typed is still here; try again.",
+    "WhoAreYou": {
+      "title": "Who are you?",
+      "description": "Pick who you are in this group. Expenses are paid by you by default, and you can change it on each one."
+    },
+    "Adjust": {
+      "title": "Adjust split",
+      "paidBy": "Paid by {payer}",
+      "EVENLY": "Evenly",
+      "BY_AMOUNT": "Amounts",
+      "BY_PERCENTAGE": "Percentage",
+      "BY_SHARES": "Shares",
+      "all": "Everyone",
+      "footerEvenly": "{each}/person ({count, plural, one {# person} other {# people}})",
+      "footerAmount": "{done} of {total}",
+      "footerPercent": "{done}% of 100% — {left}% left",
+      "footerShares": "{count} shares",
+      "done": "Done"
+    },
+    "sheetTitle": "Who paid?",
+    "fab": "Add expense",
+    "splitEvenly": "evenly",
+    "splitShares": "by shares",
+    "amountSplitMismatch": "The split by amount does not add up to the expense amount. Tap the split to adjust it."
   }
 }

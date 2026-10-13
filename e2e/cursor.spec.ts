@@ -23,4 +23,11 @@ test('every clickable element shows the pointing hand', async ({ page }) => {
 
   await openTab(page, 'Settings')
   expect(await cursorsThatAreNotPointer(page)).toEqual([])
+
+  const groupId = /\/groups\/([^/]+)\//.exec(page.url())![1]
+  await page.goto(`/groups/${groupId}/expenses/quick`)
+  expect(await cursorsThatAreNotPointer(page)).toEqual([])
+  await page.getByRole('button', { name: 'Ana', exact: true }).click()
+  await expect(page.getByTestId('split-button')).toBeVisible()
+  expect(await cursorsThatAreNotPointer(page)).toEqual([])
 })

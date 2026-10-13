@@ -1,4 +1,4 @@
-import { splittingFromGroup } from './group-defaults'
+import { describeGroupChanges, splittingFromGroup } from './group-defaults'
 
 function group(
   defaultSplitMode: 'EVENLY' | 'BY_PERCENTAGE' | 'BY_SHARES',
@@ -57,5 +57,92 @@ describe('splittingFromGroup', () => {
       { participant: 'p0', shares: '1' },
       { participant: 'p1', shares: '1' },
     ])
+  })
+})
+
+describe('describeGroupChanges', () => {
+  const casa = {
+    name: 'Casa',
+    currencyCode: 'USD',
+    defaultSplitMode: 'EVENLY' as const,
+    participants: [
+      { id: 'a', name: 'Ana', defaultShares: 100 },
+      { id: 'b', name: 'Beto', defaultShares: 100 },
+    ],
+  }
+
+  it('nada mudou → nada a registrar', () => {
+    expect(describeGroupChanges(casa, casa)).toBeUndefined()
+  })
+
+  it('nome', () => {
+    expect(describeGroupChanges(casa, { ...casa, name: 'Casa nova' })).toBe(
+      'nome: Casa → Casa nova',
+    )
+  })
+
+  it('moeda', () => {
+    expect(describeGroupChanges(casa, { ...casa, currencyCode: 'BRL' })).toBe(
+      'moeda: USD → BRL',
+    )
+  })
+
+  it('entrou e saiu', () => {
+    expect(
+      describeGroupChanges(casa, {
+        ...casa,
+        participants: [
+          casa.participants[0],
+          { name: 'Caio', defaultShares: 100 },
+        ],
+      }),
+    ).toBe('entrou: Caio; saiu: Beto')
+  })
+
+  it('divisão igualmente → porcentagem', () => {
+    expect(
+      describeGroupChanges(casa, {
+        ...casa,
+        defaultSplitMode: 'BY_PERCENTAGE',
+        participants: [
+          { ...casa.participants[0], defaultShares: 2500 },
+          { ...casa.participants[1], defaultShares: 7500 },
+        ],
+      }),
+    ).toBe('divisão: igualmente → 25% / 75%')
+  })
+
+  it('divisão porcentagem → partes, junto com o nome', () => {
+    const before = {
+      ...casa,
+      defaultSplitMode: 'BY_PERCENTAGE' as const,
+      participants: [
+        { ...casa.participants[0], defaultShares: 2500 },
+        { ...casa.participants[1], defaultShares: 7500 },
+      ],
+    }
+    expect(
+      describeGroupChanges(before, {
+        ...before,
+        name: 'Lar',
+        defaultSplitMode: 'BY_SHARES',
+        participants: [
+          { ...casa.participants[0], defaultShares: 100 },
+          { ...casa.participants[1], defaultShares: 300 },
+        ],
+      }),
+    ).toBe('nome: Casa → Lar; divisão: 25% / 75% → partes 1 / 3')
+  })
+
+  it('renomear participante na divisão igual não inventa "divisão"', () => {
+    expect(
+      describeGroupChanges(casa, {
+        ...casa,
+        participants: [
+          { ...casa.participants[0], name: 'Aninha' },
+          casa.participants[1],
+        ],
+      }),
+    ).toBeUndefined()
   })
 })

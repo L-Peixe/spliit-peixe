@@ -4,6 +4,7 @@ import {
   RecurrenceRule,
   RecurringExpenseLink,
 } from '@/generated/prisma/client'
+import { describeGroupChanges } from '@/lib/group-defaults'
 import { prisma } from '@/lib/prisma'
 import { randomId } from '@/lib/random'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
@@ -306,7 +307,10 @@ export async function updateGroup(
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
 
-  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId })
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, {
+    participantId,
+    data: describeGroupChanges(existingGroup, groupFormValues),
+  })
 
   return prisma.group.update({
     where: { id: groupId },

@@ -33,3 +33,50 @@ export function splittingFromGroup(group: GroupWithDefaults): {
       })),
   }
 }
+
+type GroupSnapshot = {
+  name: string
+  currencyCode?: string | null
+  defaultSplitMode: SplitMode
+  participants: { id?: string; name: string; defaultShares: number }[]
+}
+
+function describeSplit({ defaultSplitMode, participants }: GroupSnapshot) {
+  if (defaultSplitMode === 'EVENLY') return 'igualmente'
+  const values = participants.map((p) => p.defaultShares / 100)
+  return defaultSplitMode === 'BY_PERCENTAGE'
+    ? values.map((v) => `${v}%`).join(' / ')
+    : `partes ${values.join(' / ')}`
+}
+
+/**
+ * One readable pt-BR line with what a group edit changed, kept in the
+ * activity log; undefined when nothing it tracks changed.
+ */
+export function describeGroupChanges(
+  before: GroupSnapshot,
+  after: GroupSnapshot,
+): string | undefined {
+  const changes: string[] = []
+  if (before.name !== after.name)
+    changes.push(`nome: ${before.name} → ${after.name}`)
+  if ((before.currencyCode ?? '') !== (after.currencyCode ?? ''))
+    changes.push(`moeda: ${before.currencyCode} → ${after.currencyCode}`)
+
+  const joined = after.participants.filter((p) => p.id === undefined)
+  const left = before.participants.filter(
+    (p) => !after.participants.some((q) => q.id === p.id),
+  )
+  if (joined.length)
+    changes.push(`entrou: ${joined.map((p) => p.name).join(', ')}`)
+  if (left.length) changes.push(`saiu: ${left.map((p) => p.name).join(', ')}`)
+
+  const [splitBefore, splitAfter] = [
+    describeSplit(before),
+    describeSplit(after),
+  ]
+  if (splitBefore !== splitAfter)
+    changes.push(`divisão: ${splitBefore} → ${splitAfter}`)
+
+  return changes.length ? changes.join('; ') : undefined
+}

@@ -26,7 +26,6 @@
     "ActiveUserModal": {
       "title": "Quem é você?",
       "description": "Informe qual participante você é para personalizarmos a exibição das informações.",
-      "nobody": "Não quero selecionar ninguém",
       "save": "Salvar alterações",
       "footer": "Essa configuração pode ser alterada posteriormente nas configurações do grupo."
     },
@@ -107,13 +106,8 @@
       "Jack": "José"
     },
     "Settings": {
-      "title": "Configurações locais",
-      "description": "Essas configurações são definidas por dispositivo e são usadas para personalizar sua experiência.",
       "ActiveUserField": {
-        "label": "Usuário ativo",
-        "placeholder": "Selecione um participante",
-        "none": "Nenhum",
-        "description": "Usuário usado como padrão para pagar despesas."
+        "label": "Quem é você neste grupo?"
       },
       "save": "Salvar",
       "saving": "Salvando…",

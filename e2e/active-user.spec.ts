@@ -1,4 +1,10 @@
-import { addExpense, createGroup, expenseCard, uniqueSuffix } from './app'
+import {
+  addExpense,
+  createGroup,
+  expenseCard,
+  openTab,
+  uniqueSuffix,
+} from './app'
 import { expect, test } from './fixtures'
 import { money } from './ui'
 
@@ -75,30 +81,50 @@ test('pre-fills "Paid by" with the active user', async ({ page }) => {
   await expect(page.getByTestId('paid-by')).toContainText('Carol')
 })
 
-test('lets you decline to pick anyone', async ({ page }) => {
+test('the dialog has no "nobody" and closing it does not ask again', async ({
+  page,
+}) => {
   const groupId = await createGroup(page, {
     name: `E2E ActiveUserNobody ${uniqueSuffix()}`,
     participants: ['Alice', 'Bob'],
-  })
-
-  await addExpense(page, groupId, {
-    title: 'Taxi',
-    amount: '20',
-    paidBy: 'Alice',
   })
 
   await forgetActiveUser(page)
   await page.goto(`/groups/${groupId}/expenses`)
 
   const dialog = page.getByRole('dialog')
-  // "I don't want to select anyone" -- curly apostrophe in the source string.
-  await dialog.getByText(/don.t want to select anyone/).click()
-  await dialog.getByRole('button', { name: 'Save changes' }).click()
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('radio')).toHaveCount(2)
+  await expect(
+    dialog.getByRole('button', { name: 'Save changes' }),
+  ).toBeDisabled()
+  await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
 
-  // With nobody selected there is no personalised balance on the card...
-  await expect(expenseCard(page, 'Taxi')).not.toContainText('Your balance:')
-  // ...and the dialog does not come back.
   await page.reload()
   await expect(page.getByRole('dialog')).toBeHidden()
+})
+
+test('creating a group asks who you are, the first name already picked', async ({
+  page,
+}) => {
+  await page.goto('/groups/create')
+  const question = page.getByRole('radiogroup', {
+    name: 'Who are you in this group?',
+  })
+  await expect(question.getByRole('radio')).toHaveCount(3)
+  await expect(question.getByRole('radio').first()).toBeChecked()
+
+  const groupId = await createGroup(page, {
+    name: `E2E WhoAreYou ${uniqueSuffix()}`,
+    participants: ['Alice', 'Bob', 'Carol'],
+  })
+  await page.goto(`/groups/${groupId}/expenses/create`)
+  await expect(page.getByTestId('paid-by')).toContainText('Alice')
+
+  await openTab(page, 'Settings')
+  await page.getByLabel('Bob', { exact: true }).click()
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.goto(`/groups/${groupId}/expenses/create`)
+  await expect(page.getByTestId('paid-by')).toContainText('Bob')
 })

@@ -35,7 +35,6 @@
     "ActiveUserModal": {
       "title": "Who are you?",
       "description": "Tell us which participant you are to let us customize how the information is displayed.",
-      "nobody": "I don’t want to select anyone",
       "save": "Save changes",
       "footer": "This setting can be changed later in the group settings."
     },
@@ -143,13 +142,8 @@
       "Jack": "Jack"
     },
     "Settings": {
-      "title": "Local settings",
-      "description": "These settings are set per-device, and are used to customize your experience.",
       "ActiveUserField": {
-        "label": "Active user",
-        "placeholder": "Select a participant",
-        "none": "None",
-        "description": "User used as default for paying expenses."
+        "label": "Who are you in this group?"
       },
       "save": "Save",
       "saving": "Saving…",

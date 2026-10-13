@@ -21,6 +21,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useEffect, useState } from 'react'
+import { AdjustSplit } from './adjust-split'
 import { SplitSheet } from './split-sheet'
 import { WhoAreYou } from './who-are-you'
 
@@ -96,6 +97,8 @@ function QuickExpenseFields({
     splittingFromGroup(group),
   )
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [adjusting, setAdjusting] = useState(false)
+  const [custom, setCustom] = useState(false)
   const [error, setError] = useState<string | null>(null)
   // Same reason as create-expense-form: a fresh id after a failed save.
   const [expenseId, setExpenseId] = useState(() => randomId())
@@ -138,6 +141,25 @@ function QuickExpenseFields({
   }
 
   const [, month, day] = date.split('-')
+
+  if (adjusting)
+    return (
+      <AdjustSplit
+        participants={group.participants}
+        currency={currency}
+        amount={parseAmount(amountText) ?? 0}
+        paidBy={paidBy}
+        split={split}
+        nameOf={nameOf}
+        onBack={() => setAdjusting(false)}
+        onDone={(payer, newSplit) => {
+          setPaidBy(payer)
+          setSplit(newSplit)
+          setCustom(true)
+          setAdjusting(false)
+        }}
+      />
+    )
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4 pb-24">
@@ -213,9 +235,12 @@ function QuickExpenseFields({
         onClick={() => setSheetOpen(true)}
       >
         {t.rich(
-          split.paidFor.length === 1 && split.paidFor[0].participant !== paidBy
-            ? 'fullAmount'
-            : 'paidBySplit',
+          custom
+            ? 'custom'
+            : split.paidFor.length === 1 &&
+                split.paidFor[0].participant !== paidBy
+              ? 'fullAmount'
+              : 'paidBySplit',
           {
             payer: nameOf(paidBy),
             split: describeSplit(group),
@@ -231,8 +256,9 @@ function QuickExpenseFields({
         onPick={(payer, newSplit) => {
           setPaidBy(payer)
           setSplit(newSplit)
+          setCustom(false)
         }}
-        onMore={() => {}}
+        onMore={() => setAdjusting(true)}
       />
 
       {showNotes && (

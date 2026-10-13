@@ -347,6 +347,50 @@ export async function updateGroup(
   })
 }
 
+/**
+ * Only the default split, keyed by participant id. Anyone not in `shares`
+ * (e.g. added on another device meanwhile) gets 0.
+ */
+export async function updateGroupDefaultSplit(
+  groupId: string,
+  defaults: {
+    defaultSplitMode: 'EVENLY' | 'BY_PERCENTAGE' | 'BY_SHARES'
+    shares: Record<string, number>
+  },
+  participantId?: string,
+) {
+  const existingGroup = await getGroup(groupId)
+  if (!existingGroup) throw new Error('Invalid group ID')
+
+  const participants = existingGroup.participants.map((p) => ({
+    ...p,
+    defaultShares:
+      defaults.defaultSplitMode === 'EVENLY'
+        ? 100
+        : (defaults.shares[p.id] ?? 0),
+  }))
+  const data = describeGroupChanges(existingGroup, {
+    ...existingGroup,
+    defaultSplitMode: defaults.defaultSplitMode,
+    participants,
+  })
+  if (!data) return
+
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId, data })
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      defaultSplitMode: defaults.defaultSplitMode,
+      participants: {
+        updateMany: participants.map(({ id, defaultShares }) => ({
+          where: { id },
+          data: { defaultShares },
+        })),
+      },
+    },
+  })
+}
+
 export async function getGroup(groupId: string) {
   return prisma.group.findUnique({
     where: { id: groupId },

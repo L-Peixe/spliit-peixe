@@ -80,3 +80,12 @@ export function describeGroupChanges(
 
   return changes.length ? changes.join('; ') : undefined
 }
+
+/** Live percentage total of the group form, rounded per value like the schema. */
+export function percentTotal(values: unknown[]): number {
+  const cents = values.reduce<number>((sum, value) => {
+    const number = Number(String(value ?? '').replace(/,/g, '.'))
+    return sum + (Number.isNaN(number) ? 0 : Math.round(number * 100))
+  }, 0)
+  return cents / 100
+}

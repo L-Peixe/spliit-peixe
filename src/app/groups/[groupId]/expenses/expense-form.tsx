@@ -241,7 +241,7 @@ export function ExpenseForm({
   })
   const [isCategoryLoading, setCategoryLoading] = useState(false)
   const activeUserId = useActiveUser(group.id)
-  const updateGroupMutation = trpc.groups.update.useMutation()
+  const updateDefaultSplit = trpc.groups.updateDefaultSplit.useMutation()
   const utils = trpc.useUtils()
   const watchedSplitMode = form.watch('splitMode')
   const watchedPaidFor = form.watch('paidFor')
@@ -260,25 +260,15 @@ export function ExpenseForm({
     )
 
     if (values.saveDefaultSplittingOptions && canSaveDefault) {
-      // The default lives in the group: same mutation as editing the group.
-      await updateGroupMutation.mutateAsync({
+      // Only the split: the rest of the group may have changed elsewhere.
+      await updateDefaultSplit.mutateAsync({
         groupId: group.id,
         participantId: activeUserId ?? undefined,
-        groupFormValues: {
-          name: group.name,
-          information: group.information ?? undefined,
-          currency: group.currency,
-          currencyCode: group.currencyCode,
-          defaultSplitMode:
-            values.splitMode as GroupFormValues['defaultSplitMode'],
-          participants: group.participants.map(({ id, name }) => ({
-            id,
-            name,
-            defaultShares: Number(
-              values.paidFor.find((p) => p.participant === id)?.shares ?? 100,
-            ),
-          })),
-        },
+        defaultSplitMode:
+          values.splitMode as GroupFormValues['defaultSplitMode'],
+        shares: Object.fromEntries(
+          values.paidFor.map((p) => [p.participant, Number(p.shares)]),
+        ),
       })
       await utils.groups.get.invalidate({ groupId: group.id })
     }

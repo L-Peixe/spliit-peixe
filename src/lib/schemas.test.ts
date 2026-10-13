@@ -131,6 +131,12 @@ describe('groupFormSchema, divisão padrão', () => {
     expect(parse(group('BY_AMOUNT', ['1', '1'])).messages).not.toEqual([])
   })
 
+  it('recusa porcentagem negativa', () => {
+    expect(parse(group('BY_PERCENTAGE', ['120', '-20'])).messages).toEqual([
+      'noZeroShares',
+    ])
+  })
+
   it('cliente antigo sem os campos novos vira igualmente', () => {
     expect(parse(group(undefined, [undefined, undefined]))).toEqual({
       messages: [],

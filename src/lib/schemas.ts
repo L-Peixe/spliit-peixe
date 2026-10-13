@@ -51,8 +51,10 @@ export const groupFormSchema = z
       }
     }
     if (
-      defaultSplitMode === 'BY_SHARES' &&
-      participants.some((p) => p.defaultShares <= 0)
+      (defaultSplitMode === 'BY_SHARES' &&
+        participants.some((p) => p.defaultShares <= 0)) ||
+      (defaultSplitMode === 'BY_PERCENTAGE' &&
+        participants.some((p) => p.defaultShares < 0))
     ) {
       ctx.addIssue({ code: 'custom', message: 'noZeroShares' })
     }

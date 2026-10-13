@@ -1,8 +1,14 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FormControl, FormField, FormItem } from '@/components/ui/form'
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { percentTotal } from '@/lib/group-defaults'
 import { GroupFormInput, GroupFormValues } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -29,10 +35,11 @@ export function GroupDefaultSplit({
     useWatch({ control: form.control, name: 'participants' }) ?? []
 
   const values = participants.map((p) => asNumber(p.defaultShares))
-  // Rounded like the schema, so 33,33 + 66,67 reads as 100.
-  const sum = Math.round(values.reduce((a, b) => a + b, 0) * 100) / 100
+  const sum = percentTotal(participants.map((p) => p.defaultShares))
   const percentOff = mode === 'BY_PERCENTAGE' && sum !== 100
-  const zeroShares = mode === 'BY_SHARES' && values.some((v) => v <= 0)
+  const zeroShares =
+    (mode === 'BY_SHARES' && values.some((v) => v <= 0)) ||
+    (mode === 'BY_PERCENTAGE' && values.some((v) => v < 0))
 
   return (
     <Card className="mb-4">
@@ -103,6 +110,7 @@ export function GroupDefaultSplit({
                         <span className="w-4 text-sm text-muted-foreground">
                           {mode === 'BY_PERCENTAGE' ? '%' : ''}
                         </span>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />

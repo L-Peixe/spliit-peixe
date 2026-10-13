@@ -156,3 +156,44 @@ test('an expense split by amount cannot become the group default', async ({
   await selectRadixOption(page, page.getByTestId('split-mode'), /By amount/)
   await expect(saveAsDefault).toHaveCount(0)
 })
+
+test('saving a default from an expense keeps people added meanwhile', async ({
+  page,
+  context,
+}) => {
+  const groupId = await createGroup(page, {
+    name: `E2E Default ${uniqueSuffix()}`,
+    participants: ['Ana', 'Beto'],
+  })
+  // The expense form is open on this screen...
+  await page.goto(`/groups/${groupId}/expenses/create`)
+  const create = page.getByRole('button', { name: 'Create', exact: true })
+  await expect(create).toBeVisible({ timeout: 30_000 })
+
+  // ...while someone joins the group on another one.
+  const other = await context.newPage()
+  await other.goto(`/groups/${groupId}/edit`)
+  await other.getByRole('button', { name: 'Add participant' }).click()
+  await fillStable(other.locator('input[name="participants.2.name"]'), 'Caio')
+  await other.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect
+    .poll(async () => {
+      await other.goto(`/groups/${groupId}/edit`)
+      return other.locator('input[name="participants.2.name"]').inputValue()
+    })
+    .toBe('Caio')
+
+  await fillStable(page.locator('input[name="title"]'), 'Mercado')
+  await fillStable(page.locator('input[name="amount"]'), '100')
+  await selectRadixOption(page, page.getByTestId('paid-by'), 'Ana')
+  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
+  await page.getByText('Save as default splitting options').click()
+  await create.click()
+  await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
+
+  await page.goto(`/groups/${groupId}/edit`)
+  await expect(page.locator('input[name="participants.2.name"]')).toHaveValue(
+    'Caio',
+    { timeout: 30_000 },
+  )
+})

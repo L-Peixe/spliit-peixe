@@ -16,6 +16,9 @@
 | 6 | Escrever `.claude/settings.json` é negado em modo automático ("Self-Modification") | O classificador bloqueia o agente mudar a própria configuração | Pedir ao Lucas para aprovar ou criar o arquivo | 13/10/2026 |
 | 7 | PR aberto mexeria na produção | Variáveis do banco na Vercel marcadas para *production* **e** *preview*, e o `postinstall` roda `prisma migrate deploy` no build | Preview com banco próprio (ADR-008). Conferir os alvos das variáveis com `filter_project_envs` (só nomes) antes de todo PR com migration | 13/10/2026 |
 | 8 | `WebFetch` em `vercel.com` falha com `ENOTFOUND` | Rede do ambiente | Doc da Vercel pelo conector: `search_vercel_documentation` | 13/10/2026 |
+| 9 | e2e: 32 de 52 falham por timeout | Rodar a suíte contra `next dev` com 4 workers (cada rota compila na hora) | Rodar contra `next build && next start` com `CI=1` (2 workers, 2 retries), como no CI. Chromium do container via `playwright.local.config.ts` (gitignored, só `launchOptions.executablePath`) | 13/10/2026 |
+| 10 | `pkill -f "next ..."` derruba o próprio comando (exit 144) | O padrão casa com a linha de comando do shell que roda o `pkill` | Parar o servidor num comando separado, sem o padrão no mesmo comando que sobe outro |  13/10/2026 |
+| 11 | e2e instável: participante "na posição 2" muda | `getGroup` não ordena os participantes | Achar participante pelo nome, nunca pelo índice `participants.N` | 13/10/2026 |
 
 ## Auditoria mobile — a receita
 

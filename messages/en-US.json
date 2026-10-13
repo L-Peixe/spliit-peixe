@@ -597,7 +597,7 @@
     "fullAmountShortcut": "{payer} {payer, select, You {are} other {is}} owed the full amount",
     "more": "More options",
     "fullForm": "Full form",
-    "descriptionRequired": "Enter a description.",
+    "descriptionRequired": "Enter a description (at least 2 characters).",
     "amountInvalid": "Enter an amount above zero.",
     "saveFailed": "Could not save. What you typed is still here; try again.",
     "WhoAreYou": {
@@ -621,6 +621,7 @@
     "sheetTitle": "Who paid?",
     "fab": "Add expense",
     "splitEvenly": "evenly",
-    "splitShares": "by shares"
+    "splitShares": "by shares",
+    "amountSplitMismatch": "The split by amount does not add up to the expense amount. Tap the split to adjust it."
   }
 }

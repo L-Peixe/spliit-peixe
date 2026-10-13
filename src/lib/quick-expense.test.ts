@@ -1,5 +1,7 @@
 import {
+  amountSplitMismatch,
   describeSplit,
+  expenseDateFromInput,
   fullAmountTo,
   parseAmount,
   quickExpenseValues,
@@ -140,16 +142,55 @@ describe('splitFooter', () => {
       done: 75,
       total: 100,
       left: 25,
+      valid: false,
     })
     expect(splitFooter('BY_AMOUNT', 50, ['30', ''])).toEqual({
       done: 30,
       total: 50,
       left: 20,
+      valid: false,
     })
     expect(splitFooter('EVENLY', 25, ['1', '1'])).toEqual({
       done: 2,
       total: 2,
       left: 12.5,
+      valid: true,
     })
+  })
+
+  it('só vale o que o servidor aceita', () => {
+    expect(splitFooter('BY_PERCENTAGE', 50, ['60', '40']).valid).toBe(true)
+    // the server rounds each value: 3333 + 3333 + 3333 = 9999
+    expect(
+      splitFooter('BY_PERCENTAGE', 50, ['33.333', '33.333', '33.334']).valid,
+    ).toBe(false)
+    expect(splitFooter('BY_PERCENTAGE', 50, ['110', '-10']).valid).toBe(false)
+    expect(splitFooter('BY_SHARES', 50, ['0.001', '']).valid).toBe(false)
+    expect(splitFooter('BY_AMOUNT', 50, ['30', '20']).valid).toBe(true)
+  })
+})
+
+describe('amountSplitMismatch', () => {
+  it('divisão por valor que não fecha com o valor atual', () => {
+    const split = {
+      splitMode: 'BY_AMOUNT' as const,
+      paidFor: [
+        { participant: 'a', shares: '50' },
+        { participant: 'b', shares: '50' },
+      ],
+    }
+    expect(amountSplitMismatch(split, 100)).toBe(false)
+    expect(amountSplitMismatch(split, 120)).toBe(true)
+    expect(amountSplitMismatch({ ...split, splitMode: 'EVENLY' }, 120)).toBe(
+      false,
+    )
+  })
+})
+
+describe('expenseDateFromInput', () => {
+  it('mesma data em qualquer fuso, como o formulário completo', () => {
+    expect(expenseDateFromInput('2026-10-13').toISOString()).toBe(
+      '2026-10-13T00:00:00.000Z',
+    )
   })
 })

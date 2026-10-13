@@ -55,14 +55,8 @@ export function AdjustSplit({
     ),
   )
 
-  const { done, total, left } = splitFooter(mode, amount, shares)
+  const { done, total, left, valid } = splitFooter(mode, amount, shares)
   const money = (value: number) => formatCurrency(currency, value, locale, true)
-  const valid =
-    mode === 'EVENLY'
-      ? done > 0
-      : mode === 'BY_SHARES'
-        ? done > 0
-        : done === total && total > 0
   const footer =
     mode === 'EVENLY'
       ? t('footerEvenly', { each: money(left), count: done })

@@ -17,7 +17,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { splittingFromGroup } from '@/lib/group-defaults'
 import {
   QuickSplit,
+  amountSplitMismatch,
   describeSplit,
+  expenseDateFromInput,
   parseAmount,
   quickExpenseValues,
   suggestCategory,
@@ -123,8 +125,11 @@ function QuickExpenseFields({
   async function submit(event: FormEvent) {
     event.preventDefault()
     const amount = parseAmount(amountText)
-    if (!title.trim()) return setError(t('descriptionRequired'))
+    // The schema asks for 2+ characters; say so here, not as a failed save.
+    if (title.trim().length < 2) return setError(t('descriptionRequired'))
     if (amount === null) return setError(t('amountInvalid'))
+    if (amountSplitMismatch(split, amount))
+      return setError(t('amountSplitMismatch'))
     setError(null)
     try {
       await create.mutateAsync({
@@ -138,7 +143,7 @@ function QuickExpenseFields({
           paidBy,
           split,
           categoryId,
-          date: new Date(`${date}T12:00:00`),
+          date: expenseDateFromInput(date),
           notes,
         }),
       })

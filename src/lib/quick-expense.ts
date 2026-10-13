@@ -95,24 +95,48 @@ export function quickExpenseValues(input: {
   }
 }
 
-/** Live footer of "Ajustar divisão". EVENLY: people ticked, of all, and the amount each. */
+/** Live footer of "Ajustar divisão", and whether the server will accept it. */
 export function splitFooter(
   mode: SplitMode,
   amount: number,
   shares: string[],
-): { done: number; total: number; left: number } {
+): { done: number; total: number; left: number; valid: boolean } {
   const round = (n: number) => Math.round(n * 100) / 100
-  const values = shares.map((s) => toNumber(s) || 0)
-  const done = round(values.reduce((a, b) => a + b, 0))
+  // Each value rounded like the server does (×100), so 33,333 ×3 is 99,99.
+  const cents = shares.map((s) => Math.round((toNumber(s) || 0) * 100))
+  const negative = cents.some((c) => c < 0)
+  const done = cents.reduce((a, b) => a + b, 0) / 100
   if (mode === 'EVENLY') {
-    const ticked = values.filter((v) => v > 0).length
+    const ticked = cents.filter((c) => c > 0).length
     return {
       done: ticked,
       total: shares.length,
       left: ticked ? round(amount / ticked) : 0,
+      valid: ticked > 0,
     }
   }
   const total =
     mode === 'BY_PERCENTAGE' ? 100 : mode === 'BY_AMOUNT' ? amount : done
-  return { done, total, left: round(total - done) }
+  return {
+    done,
+    total,
+    left: round(total - done),
+    valid:
+      !negative && done > 0 && (mode === 'BY_SHARES' || done === round(total)),
+  }
+}
+
+/** A split by amount made for another amount (the amount changed afterwards). */
+export function amountSplitMismatch(split: QuickSplit, amount: number) {
+  if (split.splitMode !== 'BY_AMOUNT') return false
+  return !splitFooter(
+    'BY_AMOUNT',
+    amount,
+    split.paidFor.map((p) => p.shares),
+  ).valid
+}
+
+/** <input type="date"> value → the Date the full form sends (UTC midnight). */
+export function expenseDateFromInput(value: string) {
+  return new Date(value)
 }

@@ -478,7 +478,7 @@
     "fullAmountShortcut": "{payer} tem o valor total a receber",
     "more": "Mais opções",
     "fullForm": "Formulário completo",
-    "descriptionRequired": "Insira a descrição.",
+    "descriptionRequired": "Insira a descrição (pelo menos 2 letras).",
     "amountInvalid": "Insira um valor maior que zero.",
     "saveFailed": "Não foi possível salvar. O que você digitou continua aqui; tente de novo.",
     "WhoAreYou": {
@@ -502,6 +502,7 @@
     "sheetTitle": "Quem pagou?",
     "fab": "Adicionar despesa",
     "splitEvenly": "igualmente",
-    "splitShares": "por partes"
+    "splitShares": "por partes",
+    "amountSplitMismatch": "A divisão por valor não fecha com o valor da despesa. Toque na divisão e ajuste."
   }
 }

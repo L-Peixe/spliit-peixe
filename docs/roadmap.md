@@ -10,7 +10,9 @@
 
 ## Em andamento
 
-- **Adicionar despesa em uma tela** → `plans/2026-10-13-despesa-em-uma-tela.md` (ADR-004).
+- **Padrões do grupo (A) e despesa em uma tela (B)** → `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md` (ADR-006).
+- **Foto da despesa (C)**, Vercel Blob, lê nota/código de barras no original e guarda WebP
+  (ADR-007) — spec própria depois de A e B.
 
 ## Próximos
 
@@ -21,7 +23,7 @@ Grupo só para membros; o link vira convite; a conta lembra "quem sou eu" em qua
 - Migração: grupos de hoje não têm dono. Quem abrir um grupo antigo logado vira membro e diz
   qual participante é; o acesso sem login acaba numa data combinada com o Lucas.
 - Depende do Lucas: criar o cliente OAuth no Google Cloud (passo a passo no plano).
-- **Largada:** a despesa em uma tela no ar.
+- **Largada:** as partes A e B no ar.
 
 ### 2. Categorias brasileiras e automáticas
 - Trocar as 44 categorias do original (inglês) por uma lista brasileira curta (Mercado,
@@ -44,7 +46,7 @@ contra mês. O Spliit já tem o gráfico por grupo — reaproveitar.
 - Centavos: total que não divide exato (R$ 100 em 3x) — a diferença vai na 1ª parcela
   `[conferir com o Lucas]`. Cada parcela editável sozinha (o `finance` já viu parcela 2/3 com
   valor diferente da 1/3).
-- **Largada:** despesa em uma tela pronta (o parcelado entra como opção dela).
+- **Largada:** parte B no ar (o parcelado entra como opção da tela rápida).
 
 ### 5. Recorrente / assinaturas — completar o que existe
 Já há diária, semanal e mensal. Faltam **anual**, **data de fim** e deixar claro na lista o que
@@ -53,12 +55,10 @@ basta para o Lucas.
 
 ### 6. Casal e grupo
 Ideia do Lucas, ainda sem forma: *"casais têm dinâmicas diferentes… fica como uma ideia"*.
-**Proposta (não decidida):** não dois "modos" de app, e sim **tipo de grupo** que só muda os
-padrões — casal com divisão padrão salva no grupo (ex.: 75/25, que é "por partes" 3:1),
-amigos com "igualmente". Hoje o padrão de divisão fica no aparelho (`localStorage`), não no
-grupo. Também: divisão **por ajuste** (igual para todos, e alguém paga +R$ 10 a mais).
-- **Largada:** depois do login; antes, uma rodada de perguntas com o Lucas sobre como ele e a
-  Gio dividem hoje (o `finance` descreve o 75/25).
+A divisão padrão por grupo (ADR-006) já atende o caso real (um grupo 50/50, outro 25/75).
+Falta, se fizer sentido um dia: divisão **por ajuste** e o que mais um casal fizer diferente
+de amigos. **Não** existe padrão embutido de casal (correção do Lucas, 13/10).
+- **Largada:** depois do login, com uma rodada de perguntas ao Lucas.
 
 ### 7. Nota fiscal pelo QR code (NFC-e)
 Ler o QR do cupom e trazer loja, CNPJ, data, hora, itens, forma de pagamento e total.
@@ -97,3 +97,5 @@ Ideias, da mais barata à mais cara (detalhes no levantamento §Pix):
 
 ## Changelog
 - **2026-10-13 — criação.** Horizonte a partir do kickoff com o Lucas; ordem pela ADR-004.
+- **2026-10-13 — A, B e C.** Em andamento passa a ser a spec de padrões do grupo + tela rápida;
+  foto entra como C (ADR-006, 007). Item 6 corrigido: não há padrão de casal embutido.

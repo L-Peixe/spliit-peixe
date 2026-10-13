@@ -14,6 +14,8 @@
 | 4 | `next dev` cria `AGENTS.md` e `CLAUDE.md` no repo | O Next 16 escreve um bloco de regras para agentes | Os dois estão commitados; o `CLAUDE.md` do projeto começa com `@AGENTS.md`, e o Next só atualiza o bloco do `AGENTS.md` | 13/10/2026 |
 | 5 | `curl` para SEFAZ ou BrasilAPI: `connect_rejected` | Política de rede do ambiente (blueprint §1.1) | Lucas libera os domínios em Network access do ambiente | 13/10/2026 |
 | 6 | Escrever `.claude/settings.json` é negado em modo automático ("Self-Modification") | O classificador bloqueia o agente mudar a própria configuração | Pedir ao Lucas para aprovar ou criar o arquivo | 13/10/2026 |
+| 7 | PR aberto mexeria na produção | Variáveis do banco na Vercel marcadas para *production* **e** *preview*, e o `postinstall` roda `prisma migrate deploy` no build | Preview com banco próprio (ADR-008). Conferir os alvos das variáveis com `filter_project_envs` (só nomes) antes de todo PR com migration | 13/10/2026 |
+| 8 | `WebFetch` em `vercel.com` falha com `ENOTFOUND` | Rede do ambiente | Doc da Vercel pelo conector: `search_vercel_documentation` | 13/10/2026 |
 
 ## Auditoria mobile — a receita
 

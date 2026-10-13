@@ -1,3 +1,6 @@
+> **Status final: ✅ executado e no ar (PR #7, 13/10/2026).** Plano morto — não é pendência.
+> O desenho vigente está no código e no changelog da spec.
+
 # Parte B — despesa em uma tela · Plano de implementação
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

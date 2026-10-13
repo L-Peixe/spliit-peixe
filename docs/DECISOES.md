@@ -54,7 +54,7 @@ roadmap). Plano: `plans/2026-10-13-despesa-em-uma-tela.md`.
 Receita (income/outcome) não entra no código; fica no roadmap.
 
 ## ADR-006 — A configuração mora na criação do grupo; adicionar despesa é seco
-**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas · Substitui a ADR-004
+**Data:** 13/10/2026 · **Status:** vigente, menos a tela rápida (SUBSTITUÍDA pela ADR-009, 13/10/2026) · **Decidiu:** Lucas · Substitui a ADR-004
 
 *"O máximo que der pra padronizar na hora da criação do grupo é o que vai ser o nosso vencedor
 da praticidade."* *"O que não pode ter muita coisa é na hora de adicionar a despesa... a despesa
@@ -93,3 +93,31 @@ Preview na Vercel); o Claude cria e reseta a ramificação a partir da produçã
 Os testes do Claude continuam no Postgres em Docker do container — o preview é para o Lucas
 ver no celular. **Descartado:** ramificação automática por PR (não confirmado no plano grátis);
 ramificação fixa sem chave (reset dependeria do Lucas); desligar o preview.
+
+## ADR-009 — Uma tela só de despesa; o formulário completo vira o simples
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas · Substitui a parte "tela rápida" da ADR-006
+
+Depois de usar a parte B: *"as coisas que têm que aparecer são o nome da despesa, a categoria,
+o valor… e quem foi que pagou"*; divisão pré-selecionada e *"Quem participa desta despesa?"* com
+caixas no lugar de "Pago para"; o resto em "Mais opções". Reembolso e moeda saem do formulário
+(*"a moeda tem que ser uma configuração do grupo"*). Escolhas: **uma tela só** (a rápida sai),
+"Quem pagou" **no topo** com os 4 campos, **reorganizar o formulário atual** em vez de tela nova
+do zero, **sem "ninguém"** no "Quem é você?".
+**Descartado:** manter duas telas (rápida + completa); tela nova do zero (reescreveria divisão
+por valor, conversões e edição que já funcionam). Spec: `specs/2026-10-13-tela-unica-e-parcelado.md`.
+
+## ADR-010 — Números como no Brasil, sem exceção
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas
+
+*"Vírgula é o que separa decimais e ponto é pra a cada três dígitos, né, pra milhar. Isso é
+fundamental."* Todo campo digitado segue isso. `12.50` não vira 1.250 calado: o campo pede
+vírgula. Divisão que não fecha mostra *"excedida"* ou *"faltam"* em vermelho e não salva.
+
+## ADR-011 — Parcelado: total digitado, uma parcela por mês, centavo na 1ª
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas (as três opções recomendadas)
+
+Digita o **total** (*"10x de R$ 120,00"* aparece); as parcelas nascem **uma por mês, no dia**,
+pela recorrência mensal existente — o saldo mostra só o que venceu, como fatura; o centavo que
+sobra vai na **1ª**. Não combina com recorrência nem com divisão por valor.
+**Descartado:** criar todas as parcelas de uma vez (saldo com a dívida inteira no 1º dia);
+digitar o valor da parcela; centavo na última.

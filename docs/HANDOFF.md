@@ -4,26 +4,34 @@
 
 ## Onde estamos (13/10/2026)
 
-Parte A (padrões do grupo) **no ar**. Parte B (despesa em uma tela) implementada no PR
-`parte-b-despesa-rapida`, esperando revisão. Spec das duas: `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`.
-Infra pronta: banco de preview próprio (ADR-008) e Vercel Blob privado (ADR-007). Ainda sem login.
+**No ar** (`spliit-peixe.vercel.app`): parte A (divisão padrão do grupo + registrinho na
+Atividade), parte B (botão flutuante + tela rápida `/expenses/quick`) e a mãozinha no desktop.
+Depois de usar, o Lucas redesenhou a despesa: **uma tela só**, números em pt-BR e parcelado. O
+desenho foi aprovado em conversa e virou `specs/2026-10-13-tela-unica-e-parcelado.md`
+(ADR-009 a 011) — **ainda sem plano e sem código**. A tela rápida da parte B vai sair.
 
 ## Pendente, por prioridade
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
-| 1 | **Revisar e mergear o PR da parte B** (despesa em uma tela); testar no celular pelo preview | Lucas | Parte C |
-| 2 | **Parte C — foto da despesa:** brainstorming e spec com o Lucas (Blob privado já criado, ADR-007) | Claude + Lucas | Merge de B |
-| 3 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
+| 1 | **Revisar a spec** `specs/2026-10-13-tela-unica-e-parcelado.md` | Lucas | O plano |
+| 2 | **Plano** (skill writing-plans) e código, em **dois PRs**: (1) números pt-BR + divisão que não fecha + "Quem é você neste grupo?" + tela única; (2) parcelado. Execução: **nativo** (o Lucas escolheu nas partes A e B), revisão independente no fim | Claude | Spec aprovada |
+| 3 | **Parte C — foto da despesa:** brainstorming e spec (Blob privado já criado, ADR-007) | Claude + Lucas | Tela única no ar |
+| 4 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
 ## Para a próxima sessão não pagar de novo
 
-- Subir o ambiente: `../CLAUDE.md` § Rodando na nuvem; armadilhas em `APRENDIZADOS.md`.
+- Subir o ambiente: `../CLAUDE.md` § Rodando na nuvem; armadilhas em `APRENDIZADOS.md`
+  (#9: e2e só contra `next build && next start`, com `CI=1`; #10: nunca `pkill -f "next …"` no
+  mesmo comando que sobe o servidor).
+- Ritmo que funcionou: brainstorming → spec → writing-plans → executing-plans (nativo, TDD,
+  ledger em `.superpowers/sdd/<plano>/progress.md`) → revisor independente (Agent, modelo opus)
+  → corrigir Critical/Important com teste que falha antes → PR.
+- O formulário de despesa é o `src/app/groups/[groupId]/expenses/expense-form.tsx` (~1.400
+  linhas, do Spliit); os helpers dos e2e estão em `e2e/app.ts`.
 - Auditoria mobile pronta: `node scripts/auditoria-mobile.mjs <pasta>`.
 - O que o Spliit já tem antes de construir: tabela em `README.md`.
 - Regras de classificação e o modelo 75/25 da casa: repo `L-Peixe/finance`.
-- Os prints do Splitwise do Lucas estão descritos na spec (§ Parte B); as imagens não estão no
-  repo (são fotos pessoais).
 
 ## Infra (estado)
 
@@ -50,3 +58,4 @@ Infra pronta: banco de preview próprio (ADR-008) e Vercel Blob privado (ADR-007
 - **2026-10-13 — parte A.** Saiu "plano da parte A"; entrou revisar o PR de A e a parte B.
 - **2026-10-13 — A no ar.** PRs #4 e #5 mergeados; entrou o PR da mãozinha (regra do Lucas para desktop).
 - **2026-10-13 — parte B.** Mãozinha mergeada (#6). Saiu "plano e código da parte B" (PR aberto); entrou a parte C.
+- **2026-10-13 — tela única.** B mergeada (#7). Entraram a spec da tela única + parcelado e a revisão dela; saiu "revisar PR B".

@@ -27,6 +27,8 @@ registrar e dividir despesas com **praticidade máxima, celular primeiro**.
   O `README.md` da raiz é do original — **não editar**. A doc do projeto mora em `docs/` e aqui.
 - **Só despesas por enquanto** (ADR-005). Receita/income está no roadmap, não no código.
 - **pt-BR e R$ são o padrão** do produto; o original nasce em inglês e USD.
+- **Número como no Brasil** (ADR-010): vírgula decimal, ponto de milhar, em todo campo digitado;
+  `12.50` pede vírgula em vez de virar 1.250. Divisão que não fecha não salva.
 - **Repo público:** nunca commitar dado financeiro real, nome completo de terceiro, CPF/CNPJ de
   pessoa, token ou `.env`. Exemplos e testes usam dado inventado.
 - **Custo zero por padrão.** IA paga (OpenAI) e API paga só com pedido do Lucas pelo nome.

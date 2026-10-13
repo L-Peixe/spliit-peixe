@@ -36,7 +36,7 @@ Levantado no código em 13/10/2026 (`registro/2026-10-13-levantamento-inicial.md
 | Precisamos de | No Spliit hoje | Falta |
 |---|---|---|
 | Grupos e saldos | ✅ grupo por link, saldos, sugestão de acerto, "quem é você" | Conta de usuário (é por aparelho, `localStorage`) |
-| Divisão | ✅ igualmente, por partes, por %, por valor | **Por ajuste**. Divisão padrão do grupo: `src/lib/group-defaults.ts` e `src/components/group-default-split.tsx` (parte A). Despesa em uma tela: `src/app/groups/[groupId]/expenses/quick/`, `src/lib/quick-expense.ts` e o botão `src/components/add-expense-fab.tsx` (parte B) |
+| Divisão | ✅ igualmente, por partes, por %, por valor | **Por ajuste**. Divisão padrão do grupo: `src/lib/group-defaults.ts` e `src/components/group-default-split.tsx` (parte A). Despesa em uma tela: `src/app/groups/[groupId]/expenses/quick/`, `src/lib/quick-expense.ts` e o botão `src/components/add-expense-fab.tsx` (parte B) — vai virar a tela única, ver `specs/2026-10-13-tela-unica-e-parcelado.md` |
 | Recorrente | ✅ diária, semanal, mensal — criada quando alguém abre o grupo | Anual, data de fim, aviso |
 | Parcelado | ❌ | Tudo |
 | Categorias | ✅ 44 fixas, em inglês na origem; sugestão por IA (OpenAI, opcional) | Categorias brasileiras; regra por palavra-chave sem IA; aprender com a correção |

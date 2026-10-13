@@ -10,9 +10,10 @@
 
 ## Em andamento
 
-- **Padrões do grupo (A) e despesa em uma tela (B)** → `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md` (ADR-006).
-- **Foto da despesa (C)**, Vercel Blob, lê nota/código de barras no original e guarda WebP
-  (ADR-007) — spec própria depois de A e B.
+- **Tela única de despesa, números em pt-BR e parcelado** → `specs/2026-10-13-tela-unica-e-parcelado.md`
+  (ADR-009 a 011). Substitui a tela rápida da parte B.
+- **Foto da despesa (C)**, Vercel Blob privado, lê nota/código de barras no original e guarda
+  WebP (ADR-007) — spec própria depois da tela única.
 
 ## Próximos
 
@@ -40,13 +41,7 @@ Gasto por categoria somando **todos os grupos da pessoa** (a parte dela em cada 
 contra mês. O Spliit já tem o gráfico por grupo — reaproveitar.
 - **Largada:** login + categorias.
 
-### 4. Parcelado
-"Comprei em 10x de R$ 120": lança uma parcela por mês na mesma data, com "(3/10)" no título.
-- Reaproveitar a recorrência mensal que já existe, com número de parcelas e fim.
-- Centavos: total que não divide exato (R$ 100 em 3x) — a diferença vai na 1ª parcela
-  `[conferir com o Lucas]`. Cada parcela editável sozinha (o `finance` já viu parcela 2/3 com
-  valor diferente da 1/3).
-- **Largada:** parte B no ar (o parcelado entra como opção da tela rápida).
+### 4. Parcelado → em andamento (spec da tela única, ADR-011)
 
 ### 5. Recorrente / assinaturas — completar o que existe
 Já há diária, semanal e mensal. Faltam **anual**, **data de fim** e deixar claro na lista o que
@@ -99,3 +94,5 @@ Ideias, da mais barata à mais cara (detalhes no levantamento §Pix):
 - **2026-10-13 — criação.** Horizonte a partir do kickoff com o Lucas; ordem pela ADR-004.
 - **2026-10-13 — A, B e C.** Em andamento passa a ser a spec de padrões do grupo + tela rápida;
   foto entra como C (ADR-006, 007). Item 6 corrigido: não há padrão de casal embutido.
+- **2026-10-13 — A e B no ar.** Saíram de "em andamento" (código + changelog da spec). Parcelado
+  virou trabalho: foi para a spec da tela única (centavo na 1ª parcela, confirmado pelo Lucas).

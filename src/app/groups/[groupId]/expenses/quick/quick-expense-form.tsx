@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
 import { splittingFromGroup } from '@/lib/group-defaults'
-import { useActiveUser } from '@/lib/hooks'
 import {
   QuickSplit,
   describeSplit,
@@ -21,7 +20,9 @@ import { ArrowLeft, Calendar, Check, NotebookPen } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { FormEvent, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
+import { SplitSheet } from './split-sheet'
+import { WhoAreYou } from './who-are-you'
 
 /** Local YYYY-MM-DD, the value of an <input type="date">. */
 function today() {
@@ -37,19 +38,27 @@ export function QuickExpenseForm({ groupId }: { groupId: string }) {
   const group = groupData?.group
   const { data: categoriesData } = trpc.categories.list.useQuery()
   const categories = categoriesData?.categories
-  const activeUser = useActiveUser(groupId)
+  // undefined until localStorage was read, so "who are you" never flashes.
+  const [activeUser, setActiveUser] = useState<string | null>()
+  useEffect(() => {
+    setActiveUser(localStorage.getItem(`${groupId}-activeUser`))
+  }, [groupId])
 
-  if (!group || !categories) return null
+  if (!group || !categories || activeUser === undefined) return null
+  if (!group.participants.some((p) => p.id === activeUser))
+    return (
+      <WhoAreYou
+        groupId={group.id}
+        participants={group.participants}
+        onChoose={setActiveUser}
+      />
+    )
   return (
     <QuickExpenseFields
       key={group.id}
       group={group}
       categories={categories}
-      me={
-        group.participants.some((p) => p.id === activeUser)
-          ? activeUser!
-          : group.participants[0].id
-      }
+      me={activeUser!}
       t={t}
     />
   )
@@ -86,6 +95,7 @@ function QuickExpenseFields({
   const [split, setSplit] = useState<QuickSplit>(() =>
     splittingFromGroup(group),
   )
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   // Same reason as create-expense-form: a fresh id after a failed save.
   const [expenseId, setExpenseId] = useState(() => randomId())
@@ -196,9 +206,11 @@ function QuickExpenseFields({
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <p
-        className="self-center rounded-full border px-4 py-2 text-sm"
+      <button
+        type="button"
+        className="self-center rounded-full border px-4 py-2 text-sm hover:bg-accent"
         data-testid="split-button"
+        onClick={() => setSheetOpen(true)}
       >
         {t.rich(
           split.paidFor.length === 1 && split.paidFor[0].participant !== paidBy
@@ -210,7 +222,18 @@ function QuickExpenseFields({
             strong: (chunks) => <strong>{chunks}</strong>,
           },
         )}
-      </p>
+      </button>
+      <SplitSheet
+        group={group}
+        me={me}
+        open={sheetOpen}
+        onOpenChange={setSheetOpen}
+        onPick={(payer, newSplit) => {
+          setPaidBy(payer)
+          setSplit(newSplit)
+        }}
+        onMore={() => {}}
+      />
 
       {showNotes && (
         <Textarea

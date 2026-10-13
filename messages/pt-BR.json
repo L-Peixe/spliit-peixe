@@ -498,6 +498,7 @@
       "footerPercent": "{done}% de 100% — {left}% restantes",
       "footerShares": "{count} partes",
       "done": "Pronto"
-    }
+    },
+    "sheetTitle": "Quem pagou?"
   }
 }

@@ -52,3 +52,4 @@ postgres-data
 # performance suite output (perf/run.ts)
 /perf-report.json
 .superpowers/
+playwright.local.config.ts

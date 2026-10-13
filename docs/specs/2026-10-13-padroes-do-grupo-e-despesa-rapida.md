@@ -143,3 +143,8 @@ Dois PRs, nesta ordem: **A** (padrões do grupo) e **B** (despesa em uma tela).
 ## Changelog
 - **2026-10-13 — criação.** Partes A e B aprovadas em conversa; substitui o plano
   `plans/2026-10-13-despesa-em-uma-tela.md`, escrito antes dos prints do Splitwise.
+- **2026-10-13 — parte A implementada** (plano `plans/2026-10-13-parte-a-padroes-do-grupo.md`).
+  Escolhas do executor fora do texto da spec: trocar o modo já preenche divisão igual
+  (33,33/33,33/33,34 ou 1 parte); quem está com 0% fica fora da despesa nova; a caixa "Salvar como
+  padrão" some na divisão por valor ou com parte do grupo desmarcada; renomear participante não entra
+  no registrinho.

@@ -14,6 +14,7 @@ O app no ar é o Spliit original de 24/09, sem login.
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
+| 0 | **Recriar na Vercel `POSTGRES_PRISMA_URL` e `POSTGRES_URL_NON_POOLING` para Production**, com as strings da `main` do Neon (Connect → Branch `main`; pooling ligado / desligado). Na troca de 13/10 as duas ficaram só em Preview; `src/lib/env.ts` exige as duas e o próximo build de produção falha. O deploy no ar segue bom | Lucas | Qualquer merge que builde |
 | 1 | **Plano de implementação da parte A** (skill writing-plans), depois o código | Claude | — |
 | 2 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
@@ -34,9 +35,10 @@ O app no ar é o Spliit original de 24/09, sem login.
 - **Vercel Blob** `spliit-peixe-fotos` (`store_isHQzNxWqFLtBIJD`), **privado**, região `gru1`,
   ligado a production/preview/development → `BLOB_READ_WRITE_TOKEN`. Preview e produção
   dividem o mesmo store: foto de teste vai num prefixo próprio.
-- **Permissões da sessão:** o modo automático bloqueou criar ramificação no Neon por API
-  ("recurso compartilhado") e listar as variáveis da Vercel ("credencial"). Para o Claude
-  resetar a `preview` sozinho, a ação precisa do OK do Lucas na hora ou de regra de permissão.
+- **Autonomia do Claude** (`.claude/settings.json`, autorizado pelo Lucas): `scripts/neon-preview.sh
+  status|reset` (reset = a `preview` volta a ser cópia da produção) e listar as variáveis da
+  Vercel sem decrypt (`filter_project_envs`). Criar ramificação nova ou mexer na `main` continua
+  pedindo OK.
 
 ## Changelog
 - **2026-10-13 — criação.** Pendências do kickoff.

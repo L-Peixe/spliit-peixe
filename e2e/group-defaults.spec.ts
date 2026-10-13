@@ -47,6 +47,18 @@ async function expectSavedMode(page: Page, groupId: string, mode: Mode) {
     .toBe('true')
 }
 
+/** Participant names on the settings page; the order is not guaranteed. */
+async function participantNames(page: Page, groupId: string) {
+  await page.goto(`/groups/${groupId}/edit`)
+  const inputs = page.locator('input[name^="participants."][name$=".name"]')
+  await expect(inputs.first()).toBeVisible({ timeout: 30_000 })
+  return (
+    await inputs.evaluateAll((els) =>
+      els.map((el) => (el as HTMLInputElement).value),
+    )
+  ).sort()
+}
+
 async function groupWithDefault(
   participants: string[],
   page: Page,
@@ -125,21 +137,25 @@ test('removing someone asks to close 100% again', async ({ page }) => {
     'By percentage',
     { Ana: '50', Beto: '25', Caio: '25' },
   )
-  const caioRow = page
+  const names = page.locator('input[name^="participants."][name$=".name"]')
+  const caio = (
+    await names.evaluateAll((els) =>
+      els.map((el) => (el as HTMLInputElement).value),
+    )
+  ).indexOf('Caio')
+  await page
     .locator('li')
-    .filter({ has: page.locator('input[name="participants.2.name"]') })
-  await caioRow.getByRole('button').click()
+    .filter({ has: page.locator(`input[name="participants.${caio}.name"]`) })
+    .getByRole('button')
+    .click()
   await expect(page.getByText('75% of 100% · 25% left')).toBeVisible()
 
   await setDefaultSplit(page, 'By percentage', { Ana: '50', Beto: '50' })
   await expect(page.getByText('100% of 100% · 0% left')).toBeVisible()
   await saveSettings(page)
   await expect
-    .poll(async () => {
-      await page.goto(`/groups/${groupId}/edit`)
-      return page.locator('input[name="participants.2.name"]').count()
-    })
-    .toBe(0)
+    .poll(() => participantNames(page, groupId))
+    .toEqual(['Ana', 'Beto'])
 })
 
 test('an expense split by amount cannot become the group default', async ({
@@ -177,11 +193,8 @@ test('saving a default from an expense keeps people added meanwhile', async ({
   await fillStable(other.locator('input[name="participants.2.name"]'), 'Caio')
   await other.getByRole('button', { name: 'Save', exact: true }).click()
   await expect
-    .poll(async () => {
-      await other.goto(`/groups/${groupId}/edit`)
-      return other.locator('input[name="participants.2.name"]').inputValue()
-    })
-    .toBe('Caio')
+    .poll(() => participantNames(other, groupId))
+    .toEqual(['Ana', 'Beto', 'Caio'])
 
   await fillStable(page.locator('input[name="title"]'), 'Mercado')
   await fillStable(page.locator('input[name="amount"]'), '100')
@@ -191,9 +204,5 @@ test('saving a default from an expense keeps people added meanwhile', async ({
   await create.click()
   await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
 
-  await page.goto(`/groups/${groupId}/edit`)
-  await expect(page.locator('input[name="participants.2.name"]')).toHaveValue(
-    'Caio',
-    { timeout: 30_000 },
-  )
+  expect(await participantNames(page, groupId)).toEqual(['Ana', 'Beto', 'Caio'])
 })

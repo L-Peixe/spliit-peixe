@@ -34,9 +34,10 @@ O app no ar é o Spliit original de 24/09, sem login.
 - **Vercel Blob** `spliit-peixe-fotos` (`store_isHQzNxWqFLtBIJD`), **privado**, região `gru1`,
   ligado a production/preview/development → `BLOB_READ_WRITE_TOKEN`. Preview e produção
   dividem o mesmo store: foto de teste vai num prefixo próprio.
-- **Permissões da sessão:** o modo automático bloqueou criar ramificação no Neon por API
-  ("recurso compartilhado") e listar as variáveis da Vercel ("credencial"). Para o Claude
-  resetar a `preview` sozinho, a ação precisa do OK do Lucas na hora ou de regra de permissão.
+- **Autonomia do Claude** (`.claude/settings.json`, autorizado pelo Lucas): `scripts/neon-preview.sh
+  status|reset` (reset = a `preview` volta a ser cópia da produção) e listar as variáveis da
+  Vercel sem decrypt (`filter_project_envs`). Criar ramificação nova ou mexer na `main` continua
+  pedindo OK.
 
 ## Changelog
 - **2026-10-13 — criação.** Pendências do kickoff.
@@ -46,3 +47,4 @@ O app no ar é o Spliit original de 24/09, sem login.
 - **2026-10-13 — infra.** Saíram "aprovar a spec" (mergeada), "banco de preview" (feito),
   "criar o Blob" (feito, privado por escolha do Lucas) e "liberar hosts da NFC-e/CNPJ" (respondem).
   Remote do upstream virou item 2.
+- **2026-10-13 — variáveis.** Lucas recriou as variáveis do banco de produção (tinham ficado só em Preview na troca); conferido pela listagem da Vercel.

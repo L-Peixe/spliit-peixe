@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(scripts/neon-preview.sh *)",
+      "Bash(bash scripts/neon-preview.sh *)",
+      "mcp__Vercel__filter_project_envs"
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Rodar scripts/neon-preview.sh (status ou reset): só mexe na ramificação `preview` do Neon, cópia descartável da produção. Autorizado pelo Lucas em 13/10/2026.",
+      "Listar as variáveis de ambiente do projeto spliit-peixe na Vercel (mcp__Vercel__filter_project_envs) sem decrypt, para conferir nomes e alvos. Autorizado pelo Lucas em 13/10/2026."
+    ]
+  }
+}

@@ -24,7 +24,8 @@ Um Splitwise brasileiro e pessoal (do Lucas, da Gio e dos amigos — ADR-001):
    sem digitar nada.
 5. **Pix sem mistério**: identificar para quem e para quê foi um Pix sem depender da memória.
 6. **Parcelado** que lança uma parcela por mês sozinho, e **recorrente** (assinaturas).
-7. **Casal e grupo**: a dinâmica de um casal (ex.: rateio 75/25) é diferente da de amigos.
+7. **Padrões no grupo**: cada grupo nasce com a sua divisão (o Lucas tem um 50/50 e um 25/75),
+   e a despesa já vem com ela marcada.
 
 Horizonte, ordem e o que destrava cada item: `roadmap.md`.
 
@@ -57,7 +58,8 @@ São a semente das categorias automáticas e da conciliação com o extrato.
 | `HANDOFF.md` | estado | O que está pendente **agora**, com dono |
 | `roadmap.md` | horizonte | O que o produto quer ser, sem data; o que travou |
 | `DECISOES.md` | registro imutável | ADRs: o que foi decidido e por quê |
-| `plans/<data>-<nome>.md` | plano vivo | O que está sendo feito; executou, morre |
+| `specs/<data>-<nome>.md` | desenho aprovado | O que vai ser construído e por quê (skill brainstorming) |
+| `plans/<data>-<nome>.md` | plano vivo | Passo a passo de implementação de uma spec; executou, morre |
 | `registro/<data>-<nome>.md` | registro | Levantamentos e pesquisas datados |
 | `APRENDIZADOS.md` | registro deduplicado | Armadilhas de ambiente e de código |
 | `../README.md` | **do Spliit original** | Não editar (ADR-003) |
@@ -66,3 +68,5 @@ São a semente das categorias automáticas e da conciliação com o extrato.
 
 - **2026-10-13 — criação.** Visão do produto a partir da conversa de kickoff com o Lucas e
   tabela do que o Spliit já tem, levantada no código.
+- **2026-10-13 — specs.** Pasta `specs/` (desenho aprovado) separada de `plans/` (passo a passo);
+  item 7 da visão corrigido: padrão por grupo, sem padrão de casal embutido.

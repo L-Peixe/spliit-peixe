@@ -38,7 +38,7 @@ raiz intocado; doc do projeto em `docs/` e `CLAUDE.md`.
 primeiro, liberdade total).
 
 ## ADR-004 — Primeiro passo: adicionar despesa em uma tela
-**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas ("Adicionar despesa em 1 tela")
+**Data:** 13/10/2026 · **Status:** SUBSTITUÍDA pela ADR-006 (13/10/2026) · **Decidiu:** Lucas ("Adicionar despesa em 1 tela")
 
 Antes de login, nota fiscal ou parcelado, a tela de adicionar despesa no estilo Splitwise.
 
@@ -52,3 +52,32 @@ roadmap). Plano: `plans/2026-10-13-despesa-em-uma-tela.md`.
 
 *"Eu acho que por enquanto vamos focar só nas despesas, tá? Pode ser um plano pra depois."*
 Receita (income/outcome) não entra no código; fica no roadmap.
+
+## ADR-006 — A configuração mora na criação do grupo; adicionar despesa é seco
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas · Substitui a ADR-004
+
+*"O máximo que der pra padronizar na hora da criação do grupo é o que vai ser o nosso vencedor
+da praticidade."* *"O que não pode ter muita coisa é na hora de adicionar a despesa... a despesa
+foi isso, o valor foi esse, enviar, acabou."* O padrão vem pré-selecionado e se muda num toque,
+só naquela despesa.
+
+- Divisão padrão escolhida **por grupo**, na criação: igualmente, por porcentagem ou por partes
+  ("valor a mais" era porcentagem). Guardada no servidor, não no aparelho.
+- **Sem tipo "casal" e sem padrão embutido.** *"Já nascer 75/25 não é generalista, é específico
+  pro meu caso"* — o Lucas tem um grupo 50/50 e outro 25/75.
+- Qualquer membro muda o padrão, *"mas toda vez... ter um registrinho"* de quem mudou e o quê,
+  fácil de achar (aba Atividade).
+- Moeda é do grupo; ao criar, vem pela língua do aparelho. *"Não quero que seja um env."*
+- Ordem: **A** padrões do grupo → **B** despesa em uma tela → **C** foto, um PR cada.
+- Tela rápida: último grupo usado já marcado; salvar no ✓ do topo e no "Enviar" do teclado.
+
+**Por quê:** os prints do Splitwise mostram que a praticidade vem de padrões bons, não de menos
+funções. Spec: `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`.
+
+## ADR-007 — Foto da despesa já na primeira versão, no Vercel Blob
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas
+
+A foto é processada **na qualidade original** (para ler nota fiscal ou código de barras, que
+perdem nitidez em ângulo) e **guardada em WebP**, para ocupar pouco espaço. Armazenamento:
+Vercel Blob (o Claude cria, com autorização, quando a spec da parte C for aprovada).
+**Descartado:** adiar a foto para depois da tela rápida.

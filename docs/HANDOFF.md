@@ -14,7 +14,6 @@ O app no ar é o Spliit original de 24/09, sem login.
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
-| 0 | **Recriar na Vercel `POSTGRES_PRISMA_URL` e `POSTGRES_URL_NON_POOLING` para Production**, com as strings da `main` do Neon (Connect → Branch `main`; pooling ligado / desligado). Na troca de 13/10 as duas ficaram só em Preview; `src/lib/env.ts` exige as duas e o próximo build de produção falha. O deploy no ar segue bom | Lucas | Qualquer merge que builde |
 | 1 | **Plano de implementação da parte A** (skill writing-plans), depois o código | Claude | — |
 | 2 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
@@ -48,3 +47,4 @@ O app no ar é o Spliit original de 24/09, sem login.
 - **2026-10-13 — infra.** Saíram "aprovar a spec" (mergeada), "banco de preview" (feito),
   "criar o Blob" (feito, privado por escolha do Lucas) e "liberar hosts da NFC-e/CNPJ" (respondem).
   Remote do upstream virou item 2.
+- **2026-10-13 — variáveis.** Lucas recriou as variáveis do banco de produção (tinham ficado só em Preview na troca); conferido pela listagem da Vercel.

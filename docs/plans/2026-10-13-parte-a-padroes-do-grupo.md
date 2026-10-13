@@ -26,7 +26,6 @@ formulário de despesa troca o `localStorage` pela leitura do grupo.
 - Moeda ao criar: variável da Vercel se existir; senão pela língua (`pt-BR` → `BRL`, resto → `USD`).
 - Toda tela tocada passa por `node scripts/auditoria-mobile.mjs <pasta>` a 320 e 360 px, **com print olhado**.
 - Repo público: dados de teste inventados.
-- **Antes do merge do PR:** HANDOFF item 0 (variáveis do banco de produção na Vercel) feito, senão o build de produção falha.
 
 ## Review Focus
 

@@ -14,7 +14,7 @@ O app no ar é o Spliit original de 24/09, sem login.
 | # | O quê | Dono | Trava |
 |---|---|---|---|
 | 1 | **Revisar e aprovar a spec** de A e B | Lucas | O plano de implementação (skill writing-plans) e o código |
-| 2 | **Banco de preview separado da produção** — hoje as variáveis do banco na Vercel valem para *production* e *preview*, e o `postinstall` roda `prisma migrate deploy` no build: um PR com migration **mexe na produção antes do merge**, e teste feito no preview grava no banco real. Caminho em decisão com o Lucas | Lucas + Claude | Abrir o PR da parte A |
+| 2 | **Banco de preview separado da produção** (ADR-008). Lucas, uma vez: (a) chave da API do Neon como credencial de rede do ambiente, host `console.neon.tech`, e o host em Allowed domains; (b) depois que eu criar a ramificação `preview`, trocar na Vercel as variáveis do banco de *Preview* para ela. Claude: criar e resetar a ramificação. Hoje o preview usa a produção e o `postinstall` roda `prisma migrate deploy` no build | Lucas (a, b) + Claude | Abrir o PR da parte A |
 | 3 | Criar o Vercel Blob (autorizado) quando a spec da parte C for aprovada | Claude | Parte C |
 | 4 | Liberar em Network access do ambiente: `www.nfce.fazenda.sp.gov.br`, `brasilapi.com.br` | Lucas | Teste da NFC-e e do CNPJ (roadmap 7 e 8) |
 | 5 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
@@ -32,4 +32,4 @@ O app no ar é o Spliit original de 24/09, sem login.
 - **2026-10-13 — criação.** Pendências do kickoff.
 - **2026-10-13 — spec A/B.** Saiu "aprovar o plano" (virou spec), "prints do Splitwise" (recebidos),
   "settings.json" (o Lucas instalou os plugins) e "moeda na Vercel" (a moeda fica no grupo,
-  ADR-006). Entraram o banco de preview e o Blob.
+  ADR-006). Entraram o banco de preview (ramificação fixa + chave do Neon, ADR-008) e o Blob.

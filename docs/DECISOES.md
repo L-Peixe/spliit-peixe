@@ -81,3 +81,14 @@ A foto é processada **na qualidade original** (para ler nota fiscal ou código 
 perdem nitidez em ângulo) e **guardada em WebP**, para ocupar pouco espaço. Armazenamento:
 Vercel Blob (o Claude cria, com autorização, quando a spec da parte C for aprovada).
 **Descartado:** adiar a foto para depois da tela rápida.
+
+## ADR-008 — Banco de preview: ramificação fixa do Neon, gerida pelo Claude
+**Data:** 13/10/2026 · **Status:** vigente · **Decidiu:** Lucas ("Fixa + chave do Neon para mim")
+
+O preview da Vercel usava o banco de produção, e o build aplica migrations — um PR mexia na
+produção antes do merge. Agora: uma ramificação `preview` no Neon, usada por todos os PRs. O
+Lucas configura **uma vez** (chave da API do Neon como credencial do ambiente e as variáveis de
+Preview na Vercel); o Claude cria e reseta a ramificação a partir da produção quando precisar.
+Os testes do Claude continuam no Postgres em Docker do container — o preview é para o Lucas
+ver no celular. **Descartado:** ramificação automática por PR (não confirmado no plano grátis);
+ramificação fixa sem chave (reset dependeria do Lucas); desligar o preview.

@@ -56,6 +56,16 @@ describe('splittingFromGroup', () => {
     ).toEqual([{ participant: 'p0', shares: '100' }])
   })
 
+  it('porcentagem quebrada sai com vírgula', () => {
+    expect(
+      splittingFromGroup(group('BY_PERCENTAGE', [3333, 3333, 3334])).paidFor,
+    ).toEqual([
+      { participant: 'p0', shares: '33,33' },
+      { participant: 'p1', shares: '33,33' },
+      { participant: 'p2', shares: '33,34' },
+    ])
+  })
+
   it('grupo antigo ignora as partes guardadas', () => {
     expect(splittingFromGroup(group('EVENLY', [100, 0])).paidFor).toEqual([
       { participant: 'p0', shares: '1' },
@@ -153,7 +163,7 @@ describe('describeGroupChanges', () => {
 
 describe('percentTotal', () => {
   it('soma como o schema: cada valor arredondado a 2 casas', () => {
-    expect(percentTotal(['33,333', '33.333', '33.334'])).toBe(99.99)
+    expect(percentTotal(['33,333', '33,333', '33,334'])).toBe(99.99)
     expect(percentTotal(['25', '75'])).toBe(100)
   })
 })

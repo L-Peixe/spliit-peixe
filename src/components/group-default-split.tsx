@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { percentTotal } from '@/lib/group-defaults'
+import { formatNumberBR, numberBR } from '@/lib/number-br'
 import { GroupFormInput, GroupFormValues } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -18,7 +19,7 @@ type Mode = GroupFormValues['defaultSplitMode']
 const MODES: Mode[] = ['EVENLY', 'BY_PERCENTAGE', 'BY_SHARES']
 
 function asNumber(value: unknown) {
-  const number = Number(String(value ?? '').replace(/,/g, '.'))
+  const number = numberBR(value)
   return Number.isNaN(number) ? 0 : number
 }
 
@@ -60,7 +61,7 @@ export function GroupDefaultSplit({
               form.setValue(
                 `participants.${index}.defaultShares`,
                 value === 'BY_PERCENTAGE'
-                  ? String(
+                  ? formatNumberBR(
                       index === count - 1
                         ? Math.round((100 - even * (count - 1)) * 100) / 100
                         : even,

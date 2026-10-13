@@ -488,7 +488,8 @@
     "paidForMin1": "The expense must be paid for at least one participant.",
     "noZeroShares": "All shares must be higher than 0.",
     "amountSum": "The amounts add up to {sum}, {difference} {direction, select, over {more} other {less}} than the expense amount ({amount}).",
-    "percentageSum": "The percentages add up to {sum}%, {difference}% {direction, select, over {more} other {less}} than 100%."
+    "percentageSum": "The percentages add up to {sum}%, {difference}% {direction, select, over {more} other {less}} than 100%.",
+    "useComma": "Use a comma for the cents."
   },
   "Categories": {
     "search": "Search category...",

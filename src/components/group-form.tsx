@@ -34,6 +34,7 @@ import { Locale } from '@/i18n/request'
 import { useAnalytics } from '@/lib/analytics/context'
 import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
+import { formatNumberBR } from '@/lib/number-br'
 import {
   GROUP_INFORMATION_MAX,
   GroupFormInput,
@@ -79,7 +80,7 @@ export function GroupForm({
           currencyCode: group.currencyCode ?? '',
           participants: group.participants.map((p) => ({
             ...p,
-            defaultShares: String(p.defaultShares / 100),
+            defaultShares: formatNumberBR(p.defaultShares / 100),
           })),
           defaultSplitMode:
             group.defaultSplitMode as GroupFormValues['defaultSplitMode'],

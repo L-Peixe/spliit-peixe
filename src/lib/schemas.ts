@@ -1,5 +1,6 @@
 import { RecurrenceRule, SplitMode } from '@/generated/prisma/browser'
 import Decimal from 'decimal.js'
+import { parseNumberBR } from './number-br'
 
 import * as z from 'zod'
 
@@ -24,12 +25,12 @@ export const groupFormSchema = z
             .default(100)
             .transform((value, ctx) => {
               if (typeof value === 'number') return value
-              const number = Number(value.replace(/,/g, '.').trim())
-              if (value.trim() === '' || Number.isNaN(number)) {
-                ctx.addIssue({ code: 'custom', message: 'invalidNumber' })
+              const parsed = parseNumberBR(value)
+              if (!parsed.ok) {
+                ctx.addIssue({ code: 'custom', message: parsed.error })
                 return 0
               }
-              return Math.round(number * 100)
+              return Math.round(parsed.value * 100)
             }),
         }),
       )
@@ -111,24 +112,25 @@ export const expenseFormSchema = z
       .max(200, 'max200'),
     category: z.coerce.number().default(0),
     amount: z
-      .union(
-        [
-          z.number(),
-          z.string().transform((value, ctx) => {
-            const valueAsNumber = Number(value)
-            if (Number.isNaN(valueAsNumber))
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'invalidNumber',
-              })
-            return valueAsNumber
-          }),
-        ],
-        {
-          error: (issue) =>
-            issue.input === undefined ? 'amountRequired' : undefined,
-        },
-      )
+      .union([z.number(), z.string()], {
+        error: (issue) =>
+          issue.input === undefined ? 'amountRequired' : undefined,
+      })
+      // Outside the union: an issue raised inside one of its branches is
+      // reported as a generic "Invalid input".
+      .transform((value, ctx) => {
+        if (typeof value === 'number') return value
+        if (value.trim() === '') {
+          ctx.addIssue({ code: 'custom', message: 'amountRequired' })
+          return z.NEVER
+        }
+        const parsed = parseNumberBR(value)
+        if (!parsed.ok) {
+          ctx.addIssue({ code: 'custom', message: parsed.error })
+          return z.NEVER
+        }
+        return parsed.value
+      })
       .refine((amount) => amount != 0, 'amountNotZero')
       .refine((amount) => amount <= 10_000_000_00, 'amountTenMillion'),
     originalAmount: z
@@ -155,19 +157,18 @@ export const expenseFormSchema = z
         z.object({
           participant: z.string().max(64),
           originalAmount: z.string().optional(), // For converting shares by amounts in original currency, not saved.
-          shares: z.union([
-            z.number(),
-            z.string().transform((value, ctx) => {
-              const normalizedValue = value.replace(/,/g, '.')
-              const valueAsNumber = Number(normalizedValue)
-              if (Number.isNaN(valueAsNumber))
-                ctx.addIssue({
-                  code: z.ZodIssueCode.custom,
-                  message: 'invalidNumber',
-                })
+          shares: z.union([z.number(), z.string()]).transform((value, ctx) => {
+            // Empty counts as zero, reported by noZeroShares below.
+            if (typeof value === 'number' || value.trim() === '') return value
+            const parsed = parseNumberBR(value)
+            if (!parsed.ok) {
+              ctx.addIssue({ code: 'custom', message: parsed.error })
               return value
-            }),
-          ]),
+            }
+            // With a decimal dot, so the rest of the schema and the server
+            // read it with Number() as before.
+            return String(parsed.value)
+          }),
         }),
       )
       .min(1, 'paidForMin1')

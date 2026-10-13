@@ -36,6 +36,7 @@ import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
 import {
   GROUP_INFORMATION_MAX,
+  GroupFormInput,
   GroupFormValues,
   groupFormSchema,
 } from '@/lib/schemas'
@@ -67,7 +68,7 @@ export function GroupForm({
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('GroupForm')
-  const form = useForm<GroupFormValues>({
+  const form = useForm<GroupFormInput, any, GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: group
       ? {

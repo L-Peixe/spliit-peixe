@@ -1,4 +1,4 @@
-import { expenseFormSchema } from './schemas'
+import { expenseFormSchema, groupFormSchema } from './schemas'
 
 function byAmountExpense(amount: string, shares: string[]) {
   return {
@@ -58,5 +58,84 @@ describe('expenseFormSchema, split by amount', () => {
       'noZeroShares',
       'amountSum',
     ])
+  })
+})
+
+describe('groupFormSchema, divisão padrão', () => {
+  function group(
+    defaultSplitMode: string | undefined,
+    shares: (string | undefined)[],
+  ) {
+    return {
+      name: 'Casa',
+      currency: 'R$',
+      currencyCode: 'BRL',
+      ...(defaultSplitMode && { defaultSplitMode }),
+      participants: shares.map((defaultShares, i) => ({
+        name: `Pessoa ${i}`,
+        ...(defaultShares !== undefined && { defaultShares }),
+      })),
+    }
+  }
+
+  function parse(input: unknown) {
+    const result = groupFormSchema.safeParse(input)
+    return {
+      messages: result.success ? [] : result.error.issues.map((i) => i.message),
+      shares: result.success
+        ? result.data.participants.map((p) => p.defaultShares)
+        : [],
+      mode: result.success ? result.data.defaultSplitMode : undefined,
+    }
+  }
+
+  it('aceita porcentagem que fecha 100%, guardada ×100', () => {
+    expect(parse(group('BY_PERCENTAGE', ['25', '75']))).toEqual({
+      messages: [],
+      shares: [2500, 7500],
+      mode: 'BY_PERCENTAGE',
+    })
+  })
+
+  it('recusa porcentagem que não fecha 100%', () => {
+    const result = groupFormSchema.safeParse(
+      group('BY_PERCENTAGE', ['25', '65']),
+    )
+    expect(result.success).toBe(false)
+    expect(result.error?.issues).toEqual([
+      expect.objectContaining({
+        message: 'percentageSum',
+        path: ['participants'],
+      }),
+    ])
+  })
+
+  it('aceita vírgula decimal', () => {
+    expect(parse(group('BY_PERCENTAGE', ['12,5', '87,5'])).shares).toEqual([
+      1250, 8750,
+    ])
+  })
+
+  it('aceita partes e recusa parte zero', () => {
+    expect(parse(group('BY_SHARES', ['1', '3'])).shares).toEqual([100, 300])
+    expect(parse(group('BY_SHARES', ['0', '1'])).messages).toEqual([
+      'noZeroShares',
+    ])
+  })
+
+  it('igualmente ignora os valores e guarda 100', () => {
+    expect(parse(group('EVENLY', ['7', '0'])).shares).toEqual([100, 100])
+  })
+
+  it('não aceita divisão por valor como padrão', () => {
+    expect(parse(group('BY_AMOUNT', ['1', '1'])).messages).not.toEqual([])
+  })
+
+  it('cliente antigo sem os campos novos vira igualmente', () => {
+    expect(parse(group(undefined, [undefined, undefined]))).toEqual({
+      messages: [],
+      shares: [100, 100],
+      mode: 'EVENLY',
+    })
   })
 })

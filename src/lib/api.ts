@@ -19,11 +19,13 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      defaultSplitMode: groupFormValues.defaultSplitMode,
       participants: {
         createMany: {
-          data: groupFormValues.participants.map(({ name }) => ({
+          data: groupFormValues.participants.map(({ name, defaultShares }) => ({
             id: randomId(),
             name,
+            defaultShares,
           })),
         },
       },
@@ -313,6 +315,7 @@ export async function updateGroup(
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      defaultSplitMode: groupFormValues.defaultSplitMode,
       participants: {
         deleteMany: existingGroup.participants.filter(
           (p) => !groupFormValues.participants.some((p2) => p2.id === p.id),
@@ -323,6 +326,7 @@ export async function updateGroup(
             where: { id: participant.id },
             data: {
               name: participant.name,
+              defaultShares: participant.defaultShares,
             },
           })),
         createMany: {
@@ -331,6 +335,7 @@ export async function updateGroup(
             .map((participant) => ({
               id: randomId(),
               name: participant.name,
+              defaultShares: participant.defaultShares,
             })),
         },
       },

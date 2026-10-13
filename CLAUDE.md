@@ -21,6 +21,8 @@ registrar e dividir despesas com **praticidade máxima, celular primeiro**.
   menos toques ganha. Funcionalidade que acrescenta campo obrigatório precisa justificar.
 - **Mobile primeiro, e provado.** Toda tela tocada passa a 320 e 360 px no Chromium headless
   (`node scripts/auditoria-mobile.mjs <pasta>`), olhando o print — não só medindo overflow.
+- **Desktop: todo clicável mostra a mãozinha** (`cursor: pointer`). Regra global em
+  `src/app/globals.css`; `e2e/cursor.spec.ts` cobra. Div com `onClick` leva `cursor-pointer`.
 - **Fork vivo** (ADR-003): código novo em **arquivos próprios**; no que já existe, diff pequeno.
   O `README.md` da raiz é do original — **não editar**. A doc do projeto mora em `docs/` e aqui.
 - **Só despesas por enquanto** (ADR-005). Receita/income está no roadmap, não no código.

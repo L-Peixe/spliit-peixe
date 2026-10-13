@@ -1,6 +1,16 @@
 'use client'
+import {
+  RecentGroups,
+  getRecentGroups,
+} from '@/app/groups/recent-groups-helpers'
 import { CategorySelector } from '@/components/category-selector'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/components/ui/use-toast'
@@ -96,6 +106,8 @@ function QuickExpenseFields({
   const [split, setSplit] = useState<QuickSplit>(() =>
     splittingFromGroup(group),
   )
+  const [recentGroups, setRecentGroups] = useState<RecentGroups>([])
+  useEffect(() => setRecentGroups(getRecentGroups()), [])
   const [sheetOpen, setSheetOpen] = useState(false)
   const [adjusting, setAdjusting] = useState(false)
   const [custom, setCustom] = useState(false)
@@ -180,11 +192,30 @@ function QuickExpenseFields({
         </Button>
       </div>
 
-      <p className="text-sm">
-        {t('withYou')}{' '}
-        <span className="font-semibold">
-          {t('allOf', { group: group.name })}
-        </span>
+      <p className="flex items-center gap-1 text-sm">
+        {t('withYou')}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="link" className="h-auto p-0 font-semibold">
+              {t('allOf', { group: group.name })}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {recentGroups
+              .filter((g) => g.id !== group.id)
+              .map((g) => (
+                <DropdownMenuItem
+                  key={g.id}
+                  onSelect={() => router.push(`/groups/${g.id}/expenses/quick`)}
+                >
+                  {g.name}
+                </DropdownMenuItem>
+              ))}
+            <DropdownMenuItem onSelect={() => router.push('/groups')}>
+              {t('chooseGroup')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </p>
 
       <div className="flex items-center gap-2">
@@ -243,7 +274,10 @@ function QuickExpenseFields({
               : 'paidBySplit',
           {
             payer: nameOf(paidBy),
-            split: describeSplit(group),
+            split: describeSplit(group, {
+              evenly: t('splitEvenly'),
+              shares: t('splitShares'),
+            }),
             strong: (chunks) => <strong>{chunks}</strong>,
           },
         )}
@@ -259,6 +293,7 @@ function QuickExpenseFields({
           setCustom(false)
         }}
         onMore={() => setAdjusting(true)}
+        onFullForm={() => router.push(`/groups/${group.id}/expenses/create`)}
       />
 
       {showNotes && (

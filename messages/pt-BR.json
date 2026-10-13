@@ -499,6 +499,9 @@
       "footerShares": "{count} partes",
       "done": "Pronto"
     },
-    "sheetTitle": "Quem pagou?"
+    "sheetTitle": "Quem pagou?",
+    "fab": "Adicionar despesa",
+    "splitEvenly": "igualmente",
+    "splitShares": "por partes"
   }
 }

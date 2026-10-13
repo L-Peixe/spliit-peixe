@@ -592,9 +592,9 @@
     "youCap": "You",
     "paidBySplit": "Paid by <strong>{payer}</strong> and split <strong>{split}</strong>",
     "custom": "Paid by <strong>{payer}</strong> and split a custom way",
-    "fullAmount": "<strong>{payer}</strong> is owed the full amount",
+    "fullAmount": "<strong>{payer}</strong> {payer, select, you {are} other {is}} owed the full amount",
     "paidShortcut": "{payer} paid, split {split}",
-    "fullAmountShortcut": "{payer} is owed the full amount",
+    "fullAmountShortcut": "{payer} {payer, select, You {are} other {is}} owed the full amount",
     "more": "More options",
     "fullForm": "Full form",
     "descriptionRequired": "Enter a description.",
@@ -618,6 +618,9 @@
       "footerShares": "{count} shares",
       "done": "Done"
     },
-    "sheetTitle": "Who paid?"
+    "sheetTitle": "Who paid?",
+    "fab": "Add expense",
+    "splitEvenly": "evenly",
+    "splitShares": "by shares"
   }
 }

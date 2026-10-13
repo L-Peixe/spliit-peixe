@@ -148,3 +148,9 @@ Dois PRs, nesta ordem: **A** (padrões do grupo) e **B** (despesa em uma tela).
   (33,33/33,33/33,34 ou 1 parte); quem está com 0% fica fora da despesa nova; a caixa "Salvar como
   padrão" some na divisão por valor ou com parte do grupo desmarcada; renomear participante não entra
   no registrinho.
+- **2026-10-13 — parte B implementada** (plano `plans/2026-10-13-parte-b-despesa-rapida.md`), na rota
+  `/groups/<id>/expenses/quick`. Escolhas do executor fora do texto da spec:
+  - "Formulário completo" fica no fim do sheet de quem pagou;
+  - o botão flutuante aparece só na aba Despesas e na lista de grupos, e sem grupo recente leva a criar grupo;
+  - "Ajustar divisão" começa cada aba com divisão igual;
+  - o sheet se chama "Quem pagou?".

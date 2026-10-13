@@ -4,6 +4,7 @@ import { ActiveUserModal } from '@/app/groups/[groupId]/expenses/active-user-mod
 import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-from-receipt-button'
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
 import ExportButton from '@/app/groups/[groupId]/export-button'
+import { AddExpenseFab } from '@/components/add-expense-fab'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -55,6 +56,7 @@ export default function GroupExpensesPageClient({
       </Card>
 
       <ActiveUserModal groupId={groupId} />
+      <AddExpenseFab groupId={groupId} />
     </>
   )
 }

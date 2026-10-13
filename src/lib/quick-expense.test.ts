@@ -55,10 +55,15 @@ describe('suggestCategory', () => {
 })
 
 describe('describeSplit', () => {
+  const words = { evenly: 'igualmente', shares: 'por partes' }
   it('escreve o padrão do grupo', () => {
-    expect(describeSplit(group('EVENLY', [100, 100]))).toBe('igualmente')
-    expect(describeSplit(group('BY_PERCENTAGE', [2500, 7500]))).toBe('25/75')
-    expect(describeSplit(group('BY_SHARES', [100, 300]))).toBe('por partes')
+    expect(describeSplit(group('EVENLY', [100, 100]), words)).toBe('igualmente')
+    expect(describeSplit(group('BY_PERCENTAGE', [2500, 7500]), words)).toBe(
+      '25/75',
+    )
+    expect(describeSplit(group('BY_SHARES', [100, 300]), words)).toBe(
+      'por partes',
+    )
   })
 })
 

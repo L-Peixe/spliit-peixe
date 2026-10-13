@@ -41,12 +41,15 @@ export function suggestCategory(title: string): number {
   return KEYWORDS.find(([pattern]) => pattern.test(text))?.[1] ?? 0
 }
 
-/** The group default as the split button writes it. */
-export function describeSplit(group: QuickGroup): string {
+/** The group default as the split button writes it; words come translated. */
+export function describeSplit(
+  group: QuickGroup,
+  words: { evenly: string; shares: string },
+): string {
   if (group.defaultSplitMode === 'BY_PERCENTAGE')
     return group.participants.map((p) => p.defaultShares / 100).join('/')
-  if (group.defaultSplitMode === 'BY_SHARES') return 'por partes'
-  return 'igualmente'
+  if (group.defaultSplitMode === 'BY_SHARES') return words.shares
+  return words.evenly
 }
 
 /** "X tem o valor total a receber": only this participant owes. */

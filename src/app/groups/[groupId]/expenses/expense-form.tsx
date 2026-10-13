@@ -43,13 +43,14 @@ import {
   convertToOriginalCurrency,
 } from '@/lib/currency-conversion'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
+import { splittingFromGroup } from '@/lib/group-defaults'
 import { useActiveUser, useCurrencyRate } from '@/lib/hooks'
 import { randomId } from '@/lib/random'
 import {
   EXPENSE_NOTES_MAX,
   ExpenseFormInput,
   ExpenseFormValues,
-  SplittingOptions,
+  GroupFormValues,
   expenseFormSchema,
 } from '@/lib/schemas'
 import { distributeAmount } from '@/lib/shares'
@@ -62,6 +63,7 @@ import {
   formatCurrency,
   getCurrencyFromGroup,
 } from '@/lib/utils'
+import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ChevronRight, Save } from 'lucide-react'
@@ -93,80 +95,6 @@ const enforceCurrencyPattern = (value: string, currency?: Currency) => {
   const [integer, fraction] = number.split('.')
   if (fraction === undefined || currency.decimal_digits === 0) return integer
   return `${integer}.${fraction.slice(0, currency.decimal_digits)}`
-}
-
-const getDefaultSplittingOptions = (
-  group: NonNullable<AppRouterOutput['groups']['get']['group']>,
-) => {
-  const defaultValue = {
-    splitMode: 'EVENLY' as const,
-    paidFor: group.participants.map(({ id }) => ({
-      participant: id,
-      shares: '1' as any, // Use string to ensure consistent schema handling
-    })),
-  }
-
-  if (typeof localStorage === 'undefined') return defaultValue
-  const defaultSplitMode = localStorage.getItem(
-    `${group.id}-defaultSplittingOptions`,
-  )
-  if (defaultSplitMode === null) return defaultValue
-  const parsedDefaultSplitMode = JSON.parse(
-    defaultSplitMode,
-  ) as SplittingOptions
-
-  if (parsedDefaultSplitMode.paidFor === null) {
-    parsedDefaultSplitMode.paidFor = defaultValue.paidFor
-  }
-
-  // if there is a participant in the default options that does not exist anymore,
-  // remove the stale default splitting options
-  for (const parsedPaidFor of parsedDefaultSplitMode.paidFor) {
-    if (
-      !group.participants.some(({ id }) => id === parsedPaidFor.participant)
-    ) {
-      localStorage.removeItem(`${group.id}-defaultSplittingOptions`)
-      return defaultValue
-    }
-  }
-
-  return {
-    splitMode: parsedDefaultSplitMode.splitMode,
-    paidFor: parsedDefaultSplitMode.paidFor.map((paidFor) => ({
-      participant: paidFor.participant,
-      shares: (paidFor.shares / 100).toString(), // Convert to string for consistent schema handling
-    })),
-  }
-}
-
-async function persistDefaultSplittingOptions(
-  groupId: string,
-  expenseFormValues: ExpenseFormValues,
-) {
-  if (localStorage && expenseFormValues.saveDefaultSplittingOptions) {
-    const computePaidFor = (): SplittingOptions['paidFor'] => {
-      if (expenseFormValues.splitMode === 'EVENLY') {
-        return expenseFormValues.paidFor.map(({ participant }) => ({
-          participant,
-          shares: 100,
-        }))
-      } else if (expenseFormValues.splitMode === 'BY_AMOUNT') {
-        return null
-      } else {
-        return expenseFormValues.paidFor
-      }
-    }
-
-    const splittingOptions = {
-      splitMode: expenseFormValues.splitMode,
-      paidFor: computePaidFor(),
-    } satisfies SplittingOptions
-
-    localStorage.setItem(
-      `${groupId}-defaultSplittingOptions`,
-      JSON.stringify(splittingOptions),
-    )
-  }
 }
 
 export function ExpenseForm({
@@ -211,7 +139,7 @@ export function ExpenseForm({
   const getSelectedRecurrenceRule = (field?: { value?: string }) => {
     return field?.value as RecurrenceRule
   }
-  const defaultSplittingOptions = getDefaultSplittingOptions(group)
+  const defaultSplittingOptions = splittingFromGroup(group)
   const groupCurrency = getCurrencyFromGroup(group)
   const form = useForm<ExpenseFormInput, any, ExpenseFormValues>({
     resolver: zodResolver(expenseFormSchema),
@@ -313,6 +241,16 @@ export function ExpenseForm({
   })
   const [isCategoryLoading, setCategoryLoading] = useState(false)
   const activeUserId = useActiveUser(group.id)
+  const updateGroupMutation = trpc.groups.update.useMutation()
+  const utils = trpc.useUtils()
+  const watchedSplitMode = form.watch('splitMode')
+  const watchedPaidFor = form.watch('paidFor')
+  // A group default covers everyone and cannot be by amount.
+  const canSaveDefault =
+    watchedSplitMode !== 'BY_AMOUNT' &&
+    group.participants.every(({ id }) =>
+      watchedPaidFor.some((p) => p.participant === id),
+    )
   const sendEvent = useAnalytics()
 
   const submit = async (values: ExpenseFormValues) => {
@@ -321,7 +259,29 @@ export function ExpenseForm({
       `/groups/${group.id}/expenses`,
     )
 
-    await persistDefaultSplittingOptions(group.id, values)
+    if (values.saveDefaultSplittingOptions && canSaveDefault) {
+      // The default lives in the group: same mutation as editing the group.
+      await updateGroupMutation.mutateAsync({
+        groupId: group.id,
+        participantId: activeUserId ?? undefined,
+        groupFormValues: {
+          name: group.name,
+          information: group.information ?? undefined,
+          currency: group.currency,
+          currencyCode: group.currencyCode,
+          defaultSplitMode:
+            values.splitMode as GroupFormValues['defaultSplitMode'],
+          participants: group.participants.map(({ id, name }) => ({
+            id,
+            name,
+            defaultShares: Number(
+              values.paidFor.find((p) => p.participant === id)?.shares ?? 100,
+            ),
+          })),
+        },
+      })
+      await utils.groups.get.invalidate({ groupId: group.id })
+    }
 
     // Store monetary amounts in minor units (cents)
     values.amount = amountAsMinorUnits(values.amount, groupCurrency)
@@ -1429,25 +1389,27 @@ export function ExpenseForm({
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="saveDefaultSplittingOptions"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row gap-2 items-center space-y-0 pt-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <div>
-                          <FormLabel>
-                            {t('SplitModeField.saveAsDefault')}
-                          </FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
+                  {canSaveDefault && (
+                    <FormField
+                      control={form.control}
+                      name="saveDefaultSplittingOptions"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row gap-2 items-center space-y-0 pt-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <div>
+                            <FormLabel>
+                              {t('SplitModeField.saveAsDefault')}
+                            </FormLabel>
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  )}
                 </div>
               </CollapsibleContent>
             </Collapsible>

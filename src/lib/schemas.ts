@@ -272,9 +272,3 @@ export type ExpenseFormValues = z.output<typeof expenseFormSchema>
 // Raw form input type (before zod transforms/coercions). react-hook-form
 // operates on these values; the resolver produces ExpenseFormValues on submit.
 export type ExpenseFormInput = z.input<typeof expenseFormSchema>
-
-export type SplittingOptions = {
-  // Used for saving default splitting options in localStorage
-  splitMode: SplitMode
-  paidFor: ExpenseFormValues['paidFor'] | null
-}

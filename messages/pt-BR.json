@@ -126,6 +126,16 @@
       "createDescription": "Todos os valores e saldos estarão nesta moeda.",
       "editDescription": "Todos os valores e saldos estarão nesta moeda. A sua alteração NÃO irá converter despesas já registradas, exceto quando a moeda possuir \"unidades menores\" que a atual (ex. Alterar de Dólar Americano para Yen Japonês)",
       "customOption": "Customizado"
+    },
+    "DefaultSplit": {
+      "title": "Como vocês costumam dividir?",
+      "EVENLY": "Igualmente",
+      "BY_PERCENTAGE": "Por porcentagem",
+      "BY_SHARES": "Por partes",
+      "shareOf": "Parte de {name}",
+      "percentFooter": "{sum}% de 100% · {left}% restantes",
+      "sharesFooter": "{count} partes",
+      "zeroShares": "Todas as partes devem ser maiores que 0."
     }
   },
   "ExpenseForm": {

@@ -4,7 +4,7 @@
 
 ## Onde estamos (13/10/2026)
 
-Parte A (padrões do grupo) implementada no PR `parte-a-padroes-do-grupo`. Kickoff e brainstorming feitos. As partes **A** (padrões do grupo) e **B** (despesa em uma tela)
+Parte A (padrões do grupo) **no ar** desde 13/10 (migration aplicada na produção; o preview usou a ramificação própria). Kickoff e brainstorming feitos. As partes **A** (padrões do grupo) e **B** (despesa em uma tela)
 foram desenhadas com o Lucas e a spec foi aprovada (merge do PR #3):
 `specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`. Infra pronta: banco de preview próprio (ADR-008) e Vercel Blob privado (ADR-007).
 O app no ar é o Spliit original de 24/09, sem login.
@@ -13,8 +13,8 @@ O app no ar é o Spliit original de 24/09, sem login.
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
-| 1 | **Revisar e mergear o PR da parte A** (padrões do grupo); antes, o PR #4 (permissões), que é a base dele | Lucas | Parte B |
-| 2 | **Parte B — despesa em uma tela:** plano (writing-plans) e código, na branch nova a partir da `main` com A | Claude | Merge de A |
+| 1 | **Revisar e mergear o PR `cursor-clicavel`** (mãozinha no desktop) | Lucas | — |
+| 2 | **Parte B — despesa em uma tela:** plano (writing-plans) e código, na branch nova a partir da `main` | Claude | — |
 | 3 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
 ## Para a próxima sessão não pagar de novo
@@ -49,3 +49,4 @@ O app no ar é o Spliit original de 24/09, sem login.
   Remote do upstream virou item 2.
 - **2026-10-13 — variáveis.** Lucas recriou as variáveis do banco de produção (tinham ficado só em Preview na troca); conferido pela listagem da Vercel.
 - **2026-10-13 — parte A.** Saiu "plano da parte A"; entrou revisar o PR de A e a parte B.
+- **2026-10-13 — A no ar.** PRs #4 e #5 mergeados; entrou o PR da mãozinha (regra do Lucas para desktop).

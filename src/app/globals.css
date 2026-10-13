@@ -66,6 +66,20 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Tailwind 4 leaves buttons on the default arrow; on desktop, clickable shows the hand. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='tab'],
+  [role='combobox'],
+  [role='checkbox'],
+  [role='radio'],
+  [role='switch'],
+  [role='option'],
+  [role='menuitem'],
+  label[for],
+  summary {
+    cursor: pointer;
+  }
 }
 
 .landing-header {

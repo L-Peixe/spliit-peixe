@@ -17,12 +17,47 @@ export const groupFormSchema = z
         z.object({
           id: z.string().max(64).optional(),
           name: z.string().min(2, 'min2').max(50, 'max50'),
+          // Same unit as ExpensePaidFor.shares: the form types 25 (%) or 1
+          // (part), the schema stores ×100.
+          defaultShares: z
+            .union([z.number(), z.string()])
+            .default(100)
+            .transform((value, ctx) => {
+              if (typeof value === 'number') return value
+              const number = Number(value.replace(/,/g, '.').trim())
+              if (value.trim() === '' || Number.isNaN(number)) {
+                ctx.addIssue({ code: 'custom', message: 'invalidNumber' })
+                return 0
+              }
+              return Math.round(number * 100)
+            }),
         }),
       )
       .min(1)
       .max(100),
+    defaultSplitMode: z
+      .enum(['EVENLY', 'BY_PERCENTAGE', 'BY_SHARES'])
+      .default('EVENLY'),
   })
-  .superRefine(({ participants }, ctx) => {
+  .superRefine(({ participants, defaultSplitMode }, ctx) => {
+    if (defaultSplitMode === 'BY_PERCENTAGE') {
+      const sum = participants.reduce((sum, p) => sum + p.defaultShares, 0)
+      if (sum !== 10000) {
+        ctx.addIssue({
+          code: 'custom',
+          message: 'percentageSum',
+          path: ['participants'],
+        })
+      }
+    }
+    if (
+      (defaultSplitMode === 'BY_SHARES' &&
+        participants.some((p) => p.defaultShares <= 0)) ||
+      (defaultSplitMode === 'BY_PERCENTAGE' &&
+        participants.some((p) => p.defaultShares < 0))
+    ) {
+      ctx.addIssue({ code: 'custom', message: 'noZeroShares' })
+    }
     participants.forEach((participant, i) => {
       participants.slice(0, i).forEach((otherParticipant) => {
         if (otherParticipant.name === participant.name) {
@@ -36,7 +71,20 @@ export const groupFormSchema = z
     })
   })
 
-export type GroupFormValues = z.infer<typeof groupFormSchema>
+  .transform((group) =>
+    group.defaultSplitMode === 'EVENLY'
+      ? {
+          ...group,
+          participants: group.participants.map((p) => ({
+            ...p,
+            defaultShares: 100,
+          })),
+        }
+      : group,
+  )
+
+export type GroupFormValues = z.output<typeof groupFormSchema>
+export type GroupFormInput = z.input<typeof groupFormSchema>
 
 const inputCoercedToNumber = z.union([
   z.number(),
@@ -226,9 +274,3 @@ export type ExpenseFormValues = z.output<typeof expenseFormSchema>
 // Raw form input type (before zod transforms/coercions). react-hook-form
 // operates on these values; the resolver produces ExpenseFormValues on submit.
 export type ExpenseFormInput = z.input<typeof expenseFormSchema>
-
-export type SplittingOptions = {
-  // Used for saving default splitting options in localStorage
-  splitMode: SplitMode
-  paidFor: ExpenseFormValues['paidFor'] | null
-}

@@ -4,18 +4,18 @@
 
 ## Onde estamos (13/10/2026)
 
-Kickoff e brainstorming feitos. As partes **A** (padrões do grupo) e **B** (despesa em uma tela)
+Parte A (padrões do grupo) implementada no PR `parte-a-padroes-do-grupo`. Kickoff e brainstorming feitos. As partes **A** (padrões do grupo) e **B** (despesa em uma tela)
 foram desenhadas com o Lucas e a spec foi aprovada (merge do PR #3):
-`specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`. **Nenhum código de produto mudou.**
-Infra pronta: banco de preview próprio (ADR-008) e Vercel Blob privado (ADR-007).
+`specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md`. Infra pronta: banco de preview próprio (ADR-008) e Vercel Blob privado (ADR-007).
 O app no ar é o Spliit original de 24/09, sem login.
 
 ## Pendente, por prioridade
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
-| 1 | **Plano de implementação da parte A** (skill writing-plans), depois o código | Claude | — |
-| 2 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
+| 1 | **Revisar e mergear o PR da parte A** (padrões do grupo); antes, o PR #4 (permissões), que é a base dele | Lucas | Parte B |
+| 2 | **Parte B — despesa em uma tela:** plano (writing-plans) e código, na branch nova a partir da `main` com A | Claude | Merge de A |
+| 3 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
 ## Para a próxima sessão não pagar de novo
 
@@ -48,3 +48,4 @@ O app no ar é o Spliit original de 24/09, sem login.
   "criar o Blob" (feito, privado por escolha do Lucas) e "liberar hosts da NFC-e/CNPJ" (respondem).
   Remote do upstream virou item 2.
 - **2026-10-13 — variáveis.** Lucas recriou as variáveis do banco de produção (tinham ficado só em Preview na troca); conferido pela listagem da Vercel.
+- **2026-10-13 — parte A.** Saiu "plano da parte A"; entrou revisar o PR de A e a parte B.

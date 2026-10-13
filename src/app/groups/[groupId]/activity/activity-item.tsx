@@ -78,6 +78,12 @@ export function ActivityItem({
       </div>
       <div className="flex-1">
         <div className="m-1">{summary}</div>
+        {activity.activityType === ActivityType.UPDATE_GROUP &&
+          activity.data && (
+            <div className="mx-1 mb-1 text-xs text-muted-foreground">
+              {activity.data}
+            </div>
+          )}
       </div>
       {expenseExists && (
         <Button

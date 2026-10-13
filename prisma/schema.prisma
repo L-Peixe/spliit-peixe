@@ -14,15 +14,16 @@ datasource db {
 }
 
 model Group {
-  id           String        @id
-  name         String
-  information  String?       @db.Text
-  currency     String        @default("$")
-  currencyCode String?
-  participants Participant[]
-  expenses     Expense[]
-  activities   Activity[]
-  createdAt    DateTime      @default(now())
+  id               String        @id
+  name             String
+  information      String?       @db.Text
+  currency         String        @default("$")
+  currencyCode     String?
+  defaultSplitMode SplitMode     @default(EVENLY)
+  participants     Participant[]
+  expenses         Expense[]
+  activities       Activity[]
+  createdAt        DateTime      @default(now())
 }
 
 model Participant {
@@ -30,6 +31,7 @@ model Participant {
   name            String
   group           Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         String
+  defaultShares   Int              @default(100)
   expensesPaidBy  Expense[]
   expensesPaidFor ExpensePaidFor[]
 }

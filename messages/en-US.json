@@ -156,6 +156,16 @@
       "create": "Create",
       "creating": "Creating…",
       "cancel": "Cancel"
+    },
+    "DefaultSplit": {
+      "title": "How do you usually split?",
+      "EVENLY": "Evenly",
+      "BY_PERCENTAGE": "By percentage",
+      "BY_SHARES": "By shares",
+      "shareOf": "Share of {name}",
+      "percentFooter": "{sum}% of 100% · {left}% left",
+      "sharesFooter": "{count} shares",
+      "zeroShares": "All shares must be higher than 0."
     }
   },
   "ExpenseForm": {

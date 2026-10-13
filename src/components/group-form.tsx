@@ -36,6 +36,7 @@ import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
 import {
   GROUP_INFORMATION_MAX,
+  GroupFormInput,
   GroupFormValues,
   groupFormSchema,
 } from '@/lib/schemas'
@@ -46,6 +47,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { CurrencySelector } from './currency-selector'
+import { GroupDefaultSplit } from './group-default-split'
 import { Textarea } from './ui/textarea'
 
 export type Props = {
@@ -67,7 +69,7 @@ export function GroupForm({
 }: Props) {
   const locale = useLocale()
   const t = useTranslations('GroupForm')
-  const form = useForm<GroupFormValues>({
+  const form = useForm<GroupFormInput, any, GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: group
       ? {
@@ -75,13 +77,19 @@ export function GroupForm({
           information: group.information ?? '',
           currency: group.currency ?? '',
           currencyCode: group.currencyCode ?? '',
-          participants: group.participants,
+          participants: group.participants.map((p) => ({
+            ...p,
+            defaultShares: String(p.defaultShares / 100),
+          })),
+          defaultSplitMode:
+            group.defaultSplitMode as GroupFormValues['defaultSplitMode'],
         }
       : {
           name: '',
           information: '',
           currency: '',
-          currencyCode: defaultCurrencyCode, // TODO: derive from the locale when not configured
+          currencyCode: defaultCurrencyCode,
+          defaultSplitMode: 'EVENLY',
           participants: [
             { name: t('Participants.John') },
             { name: t('Participants.Jane') },
@@ -321,7 +329,13 @@ export function GroupForm({
             <Button
               variant="secondary"
               onClick={() => {
-                append({ name: '' })
+                append({
+                  name: '',
+                  defaultShares:
+                    form.getValues('defaultSplitMode') === 'BY_PERCENTAGE'
+                      ? '0'
+                      : '1',
+                })
               }}
               type="button"
             >
@@ -329,6 +343,8 @@ export function GroupForm({
             </Button>
           </CardFooter>
         </Card>
+
+        <GroupDefaultSplit form={form} />
 
         <Card className="mb-4">
           <CardHeader>

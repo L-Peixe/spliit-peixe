@@ -4,6 +4,7 @@ import {
   RecurrenceRule,
   RecurringExpenseLink,
 } from '@/generated/prisma/client'
+import { describeGroupChanges } from '@/lib/group-defaults'
 import { prisma } from '@/lib/prisma'
 import { randomId } from '@/lib/random'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
@@ -19,11 +20,13 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      defaultSplitMode: groupFormValues.defaultSplitMode,
       participants: {
         createMany: {
-          data: groupFormValues.participants.map(({ name }) => ({
+          data: groupFormValues.participants.map(({ name, defaultShares }) => ({
             id: randomId(),
             name,
+            defaultShares,
           })),
         },
       },
@@ -304,7 +307,10 @@ export async function updateGroup(
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
 
-  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId })
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, {
+    participantId,
+    data: describeGroupChanges(existingGroup, groupFormValues),
+  })
 
   return prisma.group.update({
     where: { id: groupId },
@@ -313,6 +319,7 @@ export async function updateGroup(
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      defaultSplitMode: groupFormValues.defaultSplitMode,
       participants: {
         deleteMany: existingGroup.participants.filter(
           (p) => !groupFormValues.participants.some((p2) => p2.id === p.id),
@@ -323,6 +330,7 @@ export async function updateGroup(
             where: { id: participant.id },
             data: {
               name: participant.name,
+              defaultShares: participant.defaultShares,
             },
           })),
         createMany: {
@@ -331,8 +339,53 @@ export async function updateGroup(
             .map((participant) => ({
               id: randomId(),
               name: participant.name,
+              defaultShares: participant.defaultShares,
             })),
         },
+      },
+    },
+  })
+}
+
+/**
+ * Only the default split, keyed by participant id. Anyone not in `shares`
+ * (e.g. added on another device meanwhile) gets 0.
+ */
+export async function updateGroupDefaultSplit(
+  groupId: string,
+  defaults: {
+    defaultSplitMode: 'EVENLY' | 'BY_PERCENTAGE' | 'BY_SHARES'
+    shares: Record<string, number>
+  },
+  participantId?: string,
+) {
+  const existingGroup = await getGroup(groupId)
+  if (!existingGroup) throw new Error('Invalid group ID')
+
+  const participants = existingGroup.participants.map((p) => ({
+    ...p,
+    defaultShares:
+      defaults.defaultSplitMode === 'EVENLY'
+        ? 100
+        : (defaults.shares[p.id] ?? 0),
+  }))
+  const data = describeGroupChanges(existingGroup, {
+    ...existingGroup,
+    defaultSplitMode: defaults.defaultSplitMode,
+    participants,
+  })
+  if (!data) return
+
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId, data })
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      defaultSplitMode: defaults.defaultSplitMode,
+      participants: {
+        updateMany: participants.map(({ id, defaultShares }) => ({
+          where: { id },
+          data: { defaultShares },
+        })),
       },
     },
   })

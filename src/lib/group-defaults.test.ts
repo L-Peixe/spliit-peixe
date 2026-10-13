@@ -1,8 +1,4 @@
-import {
-  describeGroupChanges,
-  percentTotal,
-  splittingFromGroup,
-} from './group-defaults'
+import { describeGroupChanges, splittingFromGroup } from './group-defaults'
 
 function group(
   defaultSplitMode: 'EVENLY' | 'BY_PERCENTAGE' | 'BY_SHARES',
@@ -158,12 +154,5 @@ describe('describeGroupChanges', () => {
         ],
       }),
     ).toBeUndefined()
-  })
-})
-
-describe('percentTotal', () => {
-  it('soma como o schema: cada valor arredondado a 2 casas', () => {
-    expect(percentTotal(['33,333', '33,333', '33,334'])).toBe(99.99)
-    expect(percentTotal(['25', '75'])).toBe(100)
   })
 })

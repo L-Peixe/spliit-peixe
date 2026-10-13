@@ -163,7 +163,6 @@
       "BY_PERCENTAGE": "By percentage",
       "BY_SHARES": "By shares",
       "shareOf": "Share of {name}",
-      "percentFooter": "{sum}% of 100% · {left}% left",
       "sharesFooter": "{count} shares",
       "zeroShares": "All shares must be higher than 0."
     }
@@ -624,5 +623,11 @@
     "splitEvenly": "evenly",
     "splitShares": "by shares",
     "amountSplitMismatch": "The split by amount does not add up to the expense amount. Tap the split to adjust it."
+  },
+  "SplitGap": {
+    "percentOver": "Percentage exceeded by {difference}%",
+    "percentUnder": "{difference}% missing",
+    "amountOver": "Amount exceeded by {difference}",
+    "amountUnder": "{difference} missing"
   }
 }

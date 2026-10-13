@@ -125,7 +125,7 @@ test('percentages that do not add up to 100 are not saved', async ({
   })
   await openTab(page, 'Settings')
   await setDefaultSplit(page, 'By percentage', { Ana: '90', Beto: '0' })
-  await expect(page.getByText('90% of 100% · 10% left')).toBeVisible()
+  await expect(page.getByText('10% missing')).toBeVisible()
   await saveSettings(page)
   await expectSavedMode(page, groupId, 'Evenly')
 })
@@ -148,10 +148,10 @@ test('removing someone asks to close 100% again', async ({ page }) => {
     .filter({ has: page.locator(`input[name="participants.${caio}.name"]`) })
     .getByRole('button')
     .click()
-  await expect(page.getByText('75% of 100% · 25% left')).toBeVisible()
+  await expect(page.getByText('25% missing')).toBeVisible()
 
   await setDefaultSplit(page, 'By percentage', { Ana: '50', Beto: '50' })
-  await expect(page.getByText('100% of 100% · 0% left')).toBeVisible()
+  await expect(page.getByTestId('split-gap')).toHaveCount(0)
   await saveSettings(page)
   await expect
     .poll(() => participantNames(page, groupId))

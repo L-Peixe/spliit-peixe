@@ -1,5 +1,5 @@
 import { SplitMode } from '@/generated/prisma/browser'
-import { formatNumberBR, numberBR } from '@/lib/number-br'
+import { formatNumberBR } from '@/lib/number-br'
 
 // The group's default split (part A of docs/specs/2026-10-13-padroes-do-grupo-e-despesa-rapida.md).
 // Shares use the ExpensePaidFor unit: 25% = 2500, 1 part = 100.
@@ -80,13 +80,4 @@ export function describeGroupChanges(
     changes.push(`divisão: ${splitBefore} → ${splitAfter}`)
 
   return changes.length ? changes.join('; ') : undefined
-}
-
-/** Live percentage total of the group form, rounded per value like the schema. */
-export function percentTotal(values: unknown[]): number {
-  const cents = values.reduce<number>((sum, value) => {
-    const number = numberBR(value)
-    return sum + (Number.isNaN(number) ? 0 : Math.round(number * 100))
-  }, 0)
-  return cents / 100
 }

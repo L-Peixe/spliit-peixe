@@ -133,7 +133,6 @@
       "BY_PERCENTAGE": "Por porcentagem",
       "BY_SHARES": "Por partes",
       "shareOf": "Parte de {name}",
-      "percentFooter": "{sum}% de 100% · {left}% restantes",
       "sharesFooter": "{count} partes",
       "zeroShares": "Todas as partes devem ser maiores que 0."
     }
@@ -505,5 +504,11 @@
     "splitEvenly": "igualmente",
     "splitShares": "por partes",
     "amountSplitMismatch": "A divisão por valor não fecha com o valor da despesa. Toque na divisão e ajuste."
+  },
+  "SplitGap": {
+    "percentOver": "Porcentagem excedida em {difference}%",
+    "percentUnder": "Faltam {difference}%",
+    "amountOver": "Valor excedido em {difference}",
+    "amountUnder": "Faltam {difference}"
   }
 }

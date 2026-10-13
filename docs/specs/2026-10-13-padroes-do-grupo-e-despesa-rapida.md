@@ -154,3 +154,10 @@ Dois PRs, nesta ordem: **A** (padrões do grupo) e **B** (despesa em uma tela).
   - o botão flutuante aparece só na aba Despesas e na lista de grupos, e sem grupo recente leva a criar grupo;
   - "Ajustar divisão" começa cada aba com divisão igual;
   - o sheet se chama "Quem pagou?".
+  Ficaram de fora (pequenos, da revisão final):
+  - moeda sem centavos (iene) quebra "Ajustar → Valores";
+  - "Formulário completo" não leva o que já foi digitado;
+  - o botão flutuante pode abrir um grupo arquivado;
+  - padrão com alguém a 0% aparece como "0/50/50";
+  - acima de 100% o rodapé mostra "-10% restantes";
+  - "1.000" vira 1 (já é assim no formulário completo).

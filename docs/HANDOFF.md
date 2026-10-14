@@ -4,20 +4,19 @@
 
 ## Onde estamos (14/10/2026)
 
-**No ar** (`spliit-peixe.vercel.app`): partes A e B e a mãozinha no desktop. **Em dois PRs
-encadeados** (spec `specs/2026-10-13-tela-unica-e-parcelado.md`): o PR 1 (branch `tela-unica`) —
-números pt-BR, divisão que não fecha não salva, "Quem é você neste grupo?" e a tela única — e o
-PR 2 (branch `parcelado`, montado em cima do 1, com migration aditiva) — parcelado.
+**No ar** (`spliit-peixe.vercel.app`): partes A e B, a mãozinha no desktop, a **tela única**
+(números pt-BR, divisão que não fecha não salva, "Quem é você neste grupo?") e o **parcelado**
+(PRs #8 e #9, spec `specs/2026-10-13-tela-unica-e-parcelado.md` inteira). Usando, o Lucas achou
+dois defeitos de layout no celular — são o próximo trabalho.
 
 ## Pendente, por prioridade
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
-| 1 | **Revisar e mergear o PR da tela única** (testar no preview pelo celular) | Lucas | O PR 2 |
-| 2 | **Revisar e mergear o PR do parcelado** depois do 1 (a base dele muda para `main` sozinha quando o 1 entrar) | Lucas | PR 1 |
-| 3 | **Parte C — foto da despesa:** brainstorming e spec (Blob privado já criado, ADR-007) | Claude + Lucas | Parcelado no ar |
-| 4 | **Pequenos da revisão do PR 1** (não bloqueiam): editar o valor de despesa antiga em outra moeda mantém a conversão velha; erro de campo dentro de "Mais opções" fechado fica invisível; rodapé "valor excedido" aparece junto do "use vírgula"; remover quem é "você" deixa o aparelho sem ninguém | Claude | — |
-| 5 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
+| 1 | **Layout no celular (print do Lucas, 14/10, ~330 px de largura, grupo "Teste" sem despesas):** (a) *"o quadro de despesas está com overflow"* — o card "Despesas" passa da borda direita da tela; (b) *"o botão flutuante de adicionar despesas está em cima do footer, ficando em cima do texto"* — o "+ Adicionar despesa" (`src/components/add-expense-fab.tsx`, `fixed bottom-4`) cobre o "Feito em Montréal… Desenvolvido por…". Caminho provável para (b): espaço no fim da página do tamanho do botão. Reproduzir antes no Chromium e **olhar o print de `/groups/<id>/expenses`**, vazio e com despesas (`APRENDIZADOS.md` #24) | Claude | — |
+| 2 | **Parte C — foto da despesa:** brainstorming e spec (Blob privado já criado, ADR-007) | Claude + Lucas | — |
+| 3 | **Pequenos das revisões** (não bloqueiam): editar o valor de despesa antiga em outra moeda mantém a conversão velha; erro de campo dentro de "Mais opções" fechado fica invisível; rodapé "valor excedido" aparece junto do "use vírgula"; remover quem é "você" deixa o aparelho sem ninguém; total negativo no parcelado mostra a mensagem de "pelo menos um centavo" | Claude | — |
+| 4 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
 ## Para a próxima sessão não pagar de novo
 
@@ -27,9 +26,9 @@ PR 2 (branch `parcelado`, montado em cima do 1, com migration aditiva) — parce
 - Ritmo que funcionou: brainstorming → spec → writing-plans → executing-plans (nativo, TDD,
   ledger em `.superpowers/sdd/<plano>/progress.md`) → revisor independente (Agent, modelo opus)
   → corrigir Critical/Important com teste que falha antes → PR.
-- O formulário de despesa é o `src/app/groups/[groupId]/expenses/expense-form.tsx` (~1.400
-  linhas, do Spliit); os helpers dos e2e estão em `e2e/app.ts`.
-- Auditoria mobile pronta: `node scripts/auditoria-mobile.mjs <pasta>`.
+- O formulário de despesa é o `src/app/groups/[groupId]/expenses/expense-form.tsx` (do
+  Spliit, reorganizado na tela única); os helpers dos e2e estão em `e2e/app.ts`.
+- Auditoria mobile pronta: `node scripts/auditoria-mobile.mjs <pasta>` — e olhar **todos** os prints, não só os da tela mexida.
 - O que o Spliit já tem antes de construir: tabela em `README.md`.
 - Regras de classificação e o modelo 75/25 da casa: repo `L-Peixe/finance`.
 
@@ -61,3 +60,4 @@ PR 2 (branch `parcelado`, montado em cima do 1, com migration aditiva) — parce
 - **2026-10-13 — tela única.** B mergeada (#7). Entraram a spec da tela única + parcelado e a revisão dela; saiu "revisar PR B".
 - **2026-10-14 — PR 1 da tela única.** Saíram "revisar a spec" (aprovada) e o plano/código do PR 1 (PR aberto); entrou revisar o PR; parcelado virou item próprio.
 - **2026-10-14 — parcelado.** O plano/código do PR 2 saiu (PR aberto); entrou revisar o PR 2.
+- **2026-10-14 — tela única e parcelado no ar.** Saíram os dois "mergear PR" (#8, #9); entrou o layout no celular que o Lucas achou usando; pequenos das duas revisões juntos.

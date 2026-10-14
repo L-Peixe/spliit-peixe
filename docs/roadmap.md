@@ -10,10 +10,8 @@
 
 ## Em andamento
 
-- **Tela única de despesa, números em pt-BR e parcelado** → `specs/2026-10-13-tela-unica-e-parcelado.md`
-  (ADR-009 a 011). Substitui a tela rápida da parte B.
 - **Foto da despesa (C)**, Vercel Blob privado, lê nota/código de barras no original e guarda
-  WebP (ADR-007) — spec própria depois da tela única.
+  WebP (ADR-007) — spec própria; vem depois do ajuste de layout no celular (`HANDOFF.md`).
 
 ## Próximos
 
@@ -96,3 +94,4 @@ Ideias, da mais barata à mais cara (detalhes no levantamento §Pix):
   foto entra como C (ADR-006, 007). Item 6 corrigido: não há padrão de casal embutido.
 - **2026-10-13 — A e B no ar.** Saíram de "em andamento" (código + changelog da spec). Parcelado
   virou trabalho: foi para a spec da tela única (centavo na 1ª parcela, confirmado pelo Lucas).
+- **2026-10-14 — tela única e parcelado no ar.** Saíram de "em andamento" (código + changelog da spec, PRs #8 e #9).

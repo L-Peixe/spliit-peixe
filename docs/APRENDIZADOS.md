@@ -31,6 +31,7 @@
 | 21 | e2e: o "Quem pagou" não vem com "você" logo depois de criar o grupo | O fixture re-semeia `newGroup-activeUser = None` a cada navegação, e a migração do `ExpenseList` sobrescreve o "você" | Spec que depende do "você" usa `test.use({ seedActiveUser: false })` (o app real não tem isso) | 14/10/2026 |
 | 22 | Sugestão de categoria para de funcionar depois da primeira | O `CategorySelector` do Spliit chama `onValueChange` também quando o valor muda por fora | Só conta como escolha à mão se `value !== field.value` | 14/10/2026 |
 | 23 | "(US$ NaN)" por pessoa com o valor vazio | `numberBR('')` é NaN, onde o `Number('')` antigo dava 0 | Prévia usa `numberBR(x) \|\| 0`. Achado no **print** da auditoria, não nos testes | 14/10/2026 |
+| 24 | O Lucas acha no celular um defeito que a auditoria "passou": card da lista de despesas passando da borda e o botão flutuante cobrindo o texto do rodapé | A auditoria mede vazamento **sem ancestral com overflow** e conta alvos pequenos, mas não acusa elemento `fixed` em cima de conteúdo; e só olhei os prints das telas mexidas (criar despesa e grupo), não o de `/groups/<id>/expenses` | Olhar **todos** os prints da auditoria, inclusive telas não mexidas que mostram componentes novos (o botão flutuante aparece na lista e em `/groups`). Causa exata do vazamento do card ainda não investigada (`HANDOFF.md` #1) | 14/10/2026 |
 
 ## Auditoria mobile — a receita
 
@@ -42,5 +43,6 @@ Os seletores do grupo e da despesa estão em `e2e/app.ts`; o "pago por" é o
 `getByTestId('paid-by')` e é obrigatório para salvar.
 
 ## Changelog
+- **2026-10-14 — layout no celular.** Entrou 24 (auditoria passou, Lucas achou no celular).
 - **2026-10-14 — PR da tela única.** Entraram 20 a 23 (zod, fixture do e2e, seletor de categoria, NaN); #10 ganhou o `next-server`.
 - **2026-10-13 — partes A/B e tela única.** Entraram 12 a 19 (Neon, permissões, variáveis da Vercel, edição por script, i18n, validação cliente×servidor, data, Docker); #6 atualizado (com pedido do Lucas, passou).

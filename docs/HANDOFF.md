@@ -4,17 +4,17 @@
 
 ## Onde estamos (14/10/2026)
 
-**No ar** (`spliit-peixe.vercel.app`): partes A e B e a mãozinha no desktop. **Em PR** (branch
-`tela-unica`): o PR 1 da spec `specs/2026-10-13-tela-unica-e-parcelado.md` — números pt-BR em
-todo campo, divisão que não fecha não salva ("excedida"/"faltam"), "Quem é você neste grupo?" e a
-tela única de despesa (a tela rápida da parte B saiu). Falta o PR 2: parcelado (§5 da spec).
+**No ar** (`spliit-peixe.vercel.app`): partes A e B e a mãozinha no desktop. **Em dois PRs
+encadeados** (spec `specs/2026-10-13-tela-unica-e-parcelado.md`): o PR 1 (branch `tela-unica`) —
+números pt-BR, divisão que não fecha não salva, "Quem é você neste grupo?" e a tela única — e o
+PR 2 (branch `parcelado`, montado em cima do 1, com migration aditiva) — parcelado.
 
 ## Pendente, por prioridade
 
 | # | O quê | Dono | Trava |
 |---|---|---|---|
 | 1 | **Revisar e mergear o PR da tela única** (testar no preview pelo celular) | Lucas | O PR 2 |
-| 2 | **PR 2 — parcelado** (spec §5): plano (writing-plans) e código, a partir da `main` com o PR 1. Migration aditiva: conferir antes os alvos das variáveis do banco (`APRENDIZADOS.md` #7) | Claude | PR 1 mergeado |
+| 2 | **Revisar e mergear o PR do parcelado** depois do 1 (a base dele muda para `main` sozinha quando o 1 entrar) | Lucas | PR 1 |
 | 3 | **Parte C — foto da despesa:** brainstorming e spec (Blob privado já criado, ADR-007) | Claude + Lucas | Parcelado no ar |
 | 4 | **Pequenos da revisão do PR 1** (não bloqueiam): editar o valor de despesa antiga em outra moeda mantém a conversão velha; erro de campo dentro de "Mais opções" fechado fica invisível; rodapé "valor excedido" aparece junto do "use vírgula"; remover quem é "você" deixa o aparelho sem ninguém | Claude | — |
 | 5 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
@@ -60,3 +60,4 @@ tela única de despesa (a tela rápida da parte B saiu). Falta o PR 2: parcelado
 - **2026-10-13 — parte B.** Mãozinha mergeada (#6). Saiu "plano e código da parte B" (PR aberto); entrou a parte C.
 - **2026-10-13 — tela única.** B mergeada (#7). Entraram a spec da tela única + parcelado e a revisão dela; saiu "revisar PR B".
 - **2026-10-14 — PR 1 da tela única.** Saíram "revisar a spec" (aprovada) e o plano/código do PR 1 (PR aberto); entrou revisar o PR; parcelado virou item próprio.
+- **2026-10-14 — parcelado.** O plano/código do PR 2 saiu (PR aberto); entrou revisar o PR 2.

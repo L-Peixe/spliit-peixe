@@ -110,6 +110,7 @@ Quem participa desta despesa?
 Dois PRs: **1)** números + validação + "Quem é você" + tela única; **2)** parcelado.
 
 ## Changelog
+- **2026-10-14 — PR 2 (§5, parcelado) implementado.** Plano `../plans/2026-10-14-parcelado.md`. Limite: 2 a 24 parcelas.
 - **2026-10-14 — PR 1 (§1–4) implementado.** Plano `../plans/2026-10-13-tela-unica.md`. Saíram junto os e2e de moeda por despesa (a função saiu da tela).
 - **2026-10-13 — criação.** Desenho aprovado em conversa depois de o Lucas usar A e B. Substitui
   a tela rápida da parte B (ADR-009).

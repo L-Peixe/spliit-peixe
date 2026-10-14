@@ -1,3 +1,5 @@
+> **Status final: ✅ executado (PR da branch `parcelado`, 14/10/2026).** Plano morto — não é pendência.
+
 # PR 2 — parcelado · Plano
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -65,3 +67,4 @@ recorrência some do editar quando a despesa é parcela), `e2e/installments.spec
 
 ## Changelog
 - **2026-10-14 — criação.** Plano do PR 2 da spec da tela única.
+- **2026-10-14 — executado.** Os e2e do parcelado já nasceram verdes depois do código (a tela não existia antes; RED implícito).

@@ -23,17 +23,13 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Locale } from '@/i18n/request'
 import { useAnalytics } from '@/lib/analytics/context'
 import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
+import { formatNumberBR } from '@/lib/number-br'
 import {
   GROUP_INFORMATION_MAX,
   GroupFormInput,
@@ -79,7 +75,7 @@ export function GroupForm({
           currencyCode: group.currencyCode ?? '',
           participants: group.participants.map((p) => ({
             ...p,
-            defaultShares: String(p.defaultShares / 100),
+            defaultShares: formatNumberBR(p.defaultShares / 100),
           })),
           defaultSplitMode:
             group.defaultSplitMode as GroupFormValues['defaultSplitMode'],
@@ -104,25 +100,32 @@ export function GroupForm({
   })
   const sendEvent = useAnalytics()
 
-  const [activeUser, setActiveUser] = useState<string | null>(null)
+  // "Quem é você neste grupo?" — by field key, so renaming or removing other
+  // participants keeps the choice. New group: the first name.
+  const [activeKey, setActiveKey] = useState<string | null>(null)
   useEffect(() => {
-    if (activeUser === null) {
-      const currentActiveUser =
-        fields.find(
-          (f) => f.id === localStorage.getItem(`${group?.id}-activeUser`),
-        )?.name || t('Settings.ActiveUserField.none')
-      setActiveUser(currentActiveUser)
-    }
-  }, [t, activeUser, fields, group?.id])
+    if (activeKey !== null) return
+    const stored = group && localStorage.getItem(`${group.id}-activeUser`)
+    setActiveKey(
+      (group ? fields.find((f) => f.id === stored) : fields[0])?.key ?? '',
+    )
+  }, [activeKey, fields, group])
+  const activeIndex = fields.findIndex((f) => f.key === activeKey)
+  const activeUser =
+    activeIndex === -1
+      ? undefined
+      : form.watch(`participants.${activeIndex}.name`)
 
+  // By id: a renamed participant is still you. Someone added in this edit has
+  // no id yet; ExpenseList maps `<groupId>-newUser` from the name once saved.
+  const activeId = activeIndex === -1 ? undefined : fields[activeIndex].id
   const updateActiveUser = () => {
     if (!activeUser) return
     if (group?.id) {
-      const participant = group.participants.find((p) => p.name === activeUser)
-      if (participant?.id) {
-        localStorage.setItem(`${group.id}-activeUser`, participant.id)
+      if (activeId) {
+        localStorage.setItem(`${group.id}-activeUser`, activeId)
       } else {
-        localStorage.setItem(`${group.id}-activeUser`, activeUser)
+        localStorage.setItem(`${group.id}-newUser`, activeUser)
       }
     } else {
       localStorage.setItem('newGroup-activeUser', activeUser)
@@ -141,11 +144,7 @@ export function GroupForm({
           } else {
             sendEvent({ event: 'group: create', props: {} }, `/groups`)
           }
-          await onSubmit(
-            values,
-            group?.participants.find((p) => p.name === activeUser)?.id ??
-              undefined,
-          )
+          await onSubmit(values, activeId)
         })}
       >
         <Card className="mb-4">
@@ -348,48 +347,35 @@ export function GroupForm({
 
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle>{t('Settings.title')}</CardTitle>
-            <CardDescription>{t('Settings.description')}</CardDescription>
+            <CardTitle>{t('Settings.ActiveUserField.label')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {activeUser !== null && (
-                <FormItem>
-                  <FormLabel>{t('Settings.ActiveUserField.label')}</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={(value) => {
-                        setActiveUser(value)
-                      }}
-                      defaultValue={activeUser}
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={t(
-                            'Settings.ActiveUserField.placeholder',
-                          )}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[
-                          { name: t('Settings.ActiveUserField.none') },
-                          ...form.watch('participants'),
-                        ]
-                          .filter((item) => item.name.length > 0)
-                          .map(({ name }) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>
-                    {t('Settings.ActiveUserField.description')}
-                  </FormDescription>
-                </FormItem>
-              )}
-            </div>
+            {activeKey !== null && (
+              <RadioGroup
+                value={activeKey}
+                onValueChange={setActiveKey}
+                aria-label={t('Settings.ActiveUserField.label')}
+              >
+                {fields.map((field, index) => {
+                  const name = form.watch(`participants.${index}.name`)
+                  if (!name) return null
+                  return (
+                    <div key={field.key} className="flex items-center gap-2">
+                      <RadioGroupItem
+                        value={field.key}
+                        id={`active-${field.key}`}
+                      />
+                      <Label
+                        htmlFor={`active-${field.key}`}
+                        className="flex-1 py-1 font-normal"
+                      >
+                        {name}
+                      </Label>
+                    </div>
+                  )
+                })}
+              </RadioGroup>
+            )}
           </CardContent>
         </Card>
 

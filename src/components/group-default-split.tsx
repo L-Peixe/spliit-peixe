@@ -1,4 +1,5 @@
 'use client'
+import { SplitGapFooter } from '@/components/split-gap-footer'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   FormControl,
@@ -8,7 +9,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { percentTotal } from '@/lib/group-defaults'
+import { formatNumberBR, numberBR } from '@/lib/number-br'
 import { GroupFormInput, GroupFormValues } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -18,7 +19,7 @@ type Mode = GroupFormValues['defaultSplitMode']
 const MODES: Mode[] = ['EVENLY', 'BY_PERCENTAGE', 'BY_SHARES']
 
 function asNumber(value: unknown) {
-  const number = Number(String(value ?? '').replace(/,/g, '.'))
+  const number = numberBR(value)
   return Number.isNaN(number) ? 0 : number
 }
 
@@ -35,8 +36,7 @@ export function GroupDefaultSplit({
     useWatch({ control: form.control, name: 'participants' }) ?? []
 
   const values = participants.map((p) => asNumber(p.defaultShares))
-  const sum = percentTotal(participants.map((p) => p.defaultShares))
-  const percentOff = mode === 'BY_PERCENTAGE' && sum !== 100
+  const sum = values.reduce((a, b) => a + b, 0)
   const zeroShares =
     (mode === 'BY_SHARES' && values.some((v) => v <= 0)) ||
     (mode === 'BY_PERCENTAGE' && values.some((v) => v < 0))
@@ -60,7 +60,7 @@ export function GroupDefaultSplit({
               form.setValue(
                 `participants.${index}.defaultShares`,
                 value === 'BY_PERCENTAGE'
-                  ? String(
+                  ? formatNumberBR(
                       index === count - 1
                         ? Math.round((100 - even * (count - 1)) * 100) / 100
                         : even,
@@ -117,21 +117,24 @@ export function GroupDefaultSplit({
                 </li>
               ))}
             </ul>
-            <p
-              className={cn(
-                'text-sm text-muted-foreground border-t pt-2',
-                (percentOff || zeroShares) && 'text-destructive',
-              )}
-            >
-              {mode === 'BY_PERCENTAGE'
-                ? t('percentFooter', {
-                    sum,
-                    left: Math.round((100 - sum) * 100) / 100,
-                  })
-                : zeroShares
+            {mode === 'BY_PERCENTAGE' && !zeroShares ? (
+              <SplitGapFooter
+                mode="BY_PERCENTAGE"
+                total={100}
+                values={participants.map((p) => p.defaultShares)}
+              />
+            ) : (
+              <p
+                className={cn(
+                  'text-sm text-muted-foreground border-t pt-2',
+                  zeroShares && 'text-destructive',
+                )}
+              >
+                {zeroShares
                   ? t('zeroShares')
                   : t('sharesFooter', { count: sum })}
-            </p>
+              </p>
+            )}
           </>
         )}
       </CardContent>

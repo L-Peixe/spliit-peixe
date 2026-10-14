@@ -98,8 +98,9 @@ test('records group and expense changes in the activity log', async ({
 
   const activity = page.getByText(/Expense .*Cinema.* created by/)
   await expect(activity).toBeVisible()
-  // The active user is 'None', so the actor renders as the generic fallback.
-  await expect(activity).toContainText('Someone')
+  // Creating the group answered "Who are you in this group?" with the first
+  // name, so the activity names her.
+  await expect(activity).toContainText('Alice')
 })
 
 test('exports the expenses as JSON', async ({ page }) => {

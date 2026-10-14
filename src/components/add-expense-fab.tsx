@@ -19,7 +19,7 @@ export function AddExpenseFab({ groupId }: { groupId?: string }) {
   if (target === undefined) return null
   return (
     <Link
-      href={target ? `/groups/${target}/expenses/quick` : '/groups/create'}
+      href={target ? `/groups/${target}/expenses/create` : '/groups/create'}
       className="fixed bottom-4 right-4 z-40 flex h-14 items-center gap-2 rounded-full bg-primary px-5 text-primary-foreground shadow-lg hover:bg-primary/90"
     >
       <Plus className="h-6 w-6" />

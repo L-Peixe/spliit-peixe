@@ -125,7 +125,7 @@ test('percentages that do not add up to 100 are not saved', async ({
   })
   await openTab(page, 'Settings')
   await setDefaultSplit(page, 'By percentage', { Ana: '90', Beto: '0' })
-  await expect(page.getByText('90% of 100% · 10% left')).toBeVisible()
+  await expect(page.getByText('10% missing')).toBeVisible()
   await saveSettings(page)
   await expectSavedMode(page, groupId, 'Evenly')
 })
@@ -148,10 +148,10 @@ test('removing someone asks to close 100% again', async ({ page }) => {
     .filter({ has: page.locator(`input[name="participants.${caio}.name"]`) })
     .getByRole('button')
     .click()
-  await expect(page.getByText('75% of 100% · 25% left')).toBeVisible()
+  await expect(page.getByText('25% missing')).toBeVisible()
 
   await setDefaultSplit(page, 'By percentage', { Ana: '50', Beto: '50' })
-  await expect(page.getByText('100% of 100% · 0% left')).toBeVisible()
+  await expect(page.getByTestId('split-gap')).toHaveCount(0)
   await saveSettings(page)
   await expect
     .poll(() => participantNames(page, groupId))
@@ -166,7 +166,6 @@ test('an expense split by amount cannot become the group default', async ({
     participants: ['Ana', 'Beto'],
   })
   await page.goto(`/groups/${groupId}/expenses/create`)
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   const saveAsDefault = page.getByText('Save as default splitting options')
   await expect(saveAsDefault).toBeVisible()
   await selectRadixOption(page, page.getByTestId('split-mode'), /By amount/)
@@ -199,10 +198,35 @@ test('saving a default from an expense keeps people added meanwhile', async ({
   await fillStable(page.locator('input[name="title"]'), 'Mercado')
   await fillStable(page.locator('input[name="amount"]'), '100')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Ana')
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   await page.getByText('Save as default splitting options').click()
   await create.click()
   await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
 
   expect(await participantNames(page, groupId)).toEqual(['Ana', 'Beto', 'Caio'])
+})
+
+test('"Mark as paid" saves in a group split by percentage', async ({
+  page,
+}) => {
+  const groupId = await groupWithDefault(
+    ['Ana', 'Beto'],
+    page,
+    'By percentage',
+    {
+      Ana: '75',
+      Beto: '25',
+    },
+  )
+  await addExpense(page, groupId, {
+    title: 'Luz',
+    amount: '100',
+    paidBy: 'Ana',
+  })
+
+  await openTab(page, 'Balances')
+  await page.getByRole('link', { name: 'Mark as paid' }).click()
+  await page.waitForURL(/reimbursement=yes/, { timeout: 30_000 })
+  await expect(page.getByTestId('split-gap')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Create', exact: true }).click()
+  await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
 })

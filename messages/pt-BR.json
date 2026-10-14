@@ -26,7 +26,6 @@
     "ActiveUserModal": {
       "title": "Quem é você?",
       "description": "Informe qual participante você é para personalizarmos a exibição das informações.",
-      "nobody": "Não quero selecionar ninguém",
       "save": "Salvar alterações",
       "footer": "Essa configuração pode ser alterada posteriormente nas configurações do grupo."
     },
@@ -107,13 +106,8 @@
       "Jack": "José"
     },
     "Settings": {
-      "title": "Configurações locais",
-      "description": "Essas configurações são definidas por dispositivo e são usadas para personalizar sua experiência.",
       "ActiveUserField": {
-        "label": "Usuário ativo",
-        "placeholder": "Selecione um participante",
-        "none": "Nenhum",
-        "description": "Usuário usado como padrão para pagar despesas."
+        "label": "Quem é você neste grupo?"
       },
       "save": "Salvar",
       "saving": "Salvando…",
@@ -133,7 +127,6 @@
       "BY_PERCENTAGE": "Por porcentagem",
       "BY_SHARES": "Por partes",
       "shareOf": "Parte de {name}",
-      "percentFooter": "{sum}% de 100% · {left}% restantes",
       "sharesFooter": "{count} partes",
       "zeroShares": "Todas as partes devem ser maiores que 0."
     }
@@ -171,8 +164,8 @@
       "create": "Criar despesa",
       "edit": "Editar despesa",
       "TitleField": {
-        "label": "Título da despesa",
-        "placeholder": "Restaurante na segunda à noite",
+        "label": "Nome da despesa",
+        "placeholder": "Mercado, Uber, aluguel…",
         "description": "Insira uma descrição para a despesa."
       },
       "DateField": {
@@ -181,12 +174,12 @@
       },
       "categoryFieldDescription": "Selecione a categoria da despesa.",
       "paidByField": {
-        "label": "Pago por",
+        "label": "Quem pagou",
         "description": "Selecione o participante que pagou a despesa.",
         "placeholder": "Selecione um participante"
       },
       "paidFor": {
-        "title": "Pago para",
+        "title": "Quem participa desta despesa?",
         "description": "Selecione para quem a despesa foi paga."
       },
       "splitModeDescription": "Selecione como dividir a despesa.",
@@ -262,7 +255,8 @@
     "conversionUnavailable": "Para definir uma moeda diferente por despesa e converter valores, selecione uma moeda não personalizada para o grupo.",
     "originalAmountField": {
       "label": "Valor a converter"
-    }
+    },
+    "moreOptions": "Mais opções"
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -374,7 +368,8 @@
     "noZeroShares": "Todas as partes devem ser maiores que 0.",
     "amountSum": "A soma dos valores deve ser igual ao valor da despesa.",
     "percentageSum": "A soma das porcentagens deve ser igual a 100.",
-    "ratePositive": "A taxa deve ser maior que zero."
+    "ratePositive": "A taxa deve ser maior que zero.",
+    "useComma": "Use vírgula para os centavos."
   },
   "Categories": {
     "search": "Pesquisar categoria...",
@@ -459,50 +454,12 @@
     }
   },
   "QuickExpense": {
-    "title": "Adicionar despesa",
-    "back": "Voltar",
-    "save": "Salvar",
-    "withYou": "Com você e:",
-    "allOf": "Todos de {group}",
-    "chooseGroup": "Escolher grupo",
-    "descriptionPlaceholder": "Insira a descrição",
-    "date": "Data",
-    "notes": "Nota",
-    "notesPlaceholder": "Nota (opcional)",
-    "you": "você",
-    "youCap": "Você",
-    "paidBySplit": "Pago por <strong>{payer}</strong> e dividido <strong>{split}</strong>",
-    "custom": "Pago por <strong>{payer}</strong> e dividido de forma personalizada",
-    "fullAmount": "<strong>{payer}</strong> tem o valor total a receber",
-    "paidShortcut": "{payer} pagou, dividir {split}",
-    "fullAmountShortcut": "{payer} tem o valor total a receber",
-    "more": "Mais opções",
-    "fullForm": "Formulário completo",
-    "descriptionRequired": "Insira a descrição (pelo menos 2 letras).",
-    "amountInvalid": "Insira um valor maior que zero.",
-    "saveFailed": "Não foi possível salvar. O que você digitou continua aqui; tente de novo.",
-    "WhoAreYou": {
-      "title": "Quem é você?",
-      "description": "Escolha quem é você neste grupo. As despesas saem pagas por você, e dá para trocar em cada uma."
-    },
-    "Adjust": {
-      "title": "Ajustar divisão",
-      "paidBy": "Pago por {payer}",
-      "EVENLY": "Igualmente",
-      "BY_AMOUNT": "Valores",
-      "BY_PERCENTAGE": "Porcentagem",
-      "BY_SHARES": "Partes",
-      "all": "Todos",
-      "footerEvenly": "{each}/pessoa ({count, plural, one {# pessoa} other {# pessoas}})",
-      "footerAmount": "{done} de {total}",
-      "footerPercent": "{done}% de 100% — {left}% restantes",
-      "footerShares": "{count} partes",
-      "done": "Pronto"
-    },
-    "sheetTitle": "Quem pagou?",
-    "fab": "Adicionar despesa",
-    "splitEvenly": "igualmente",
-    "splitShares": "por partes",
-    "amountSplitMismatch": "A divisão por valor não fecha com o valor da despesa. Toque na divisão e ajuste."
+    "fab": "Adicionar despesa"
+  },
+  "SplitGap": {
+    "percentOver": "Porcentagem excedida em {difference}%",
+    "percentUnder": "Faltam {difference}%",
+    "amountOver": "Valor excedido em {difference}",
+    "amountUnder": "Faltam {difference}"
   }
 }

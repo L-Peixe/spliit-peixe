@@ -102,27 +102,21 @@ function ActiveUserForm({
   close: () => void
 }) {
   const t = useTranslations('Expenses.ActiveUserModal')
-  const [selected, setSelected] = useState('None')
+  const [selected, setSelected] = useState<string>()
 
   return (
     <form
       className={cn('grid items-start gap-4', className)}
       onSubmit={(event) => {
-        if (!group) return
+        if (!group || !selected) return
 
         event.preventDefault()
         localStorage.setItem(`${group.id}-activeUser`, selected)
         close()
       }}
     >
-      <RadioGroup defaultValue="none" onValueChange={setSelected}>
+      <RadioGroup value={selected} onValueChange={setSelected}>
         <div className="flex flex-col gap-4 my-4">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="none" id="none" />
-            <Label htmlFor="none" className="italic font-normal flex-1">
-              {t('nobody')}
-            </Label>
-          </div>
           {group?.participants.map((participant) => (
             <div key={participant.id} className="flex items-center space-x-2">
               <RadioGroupItem value={participant.id} id={participant.id} />
@@ -133,7 +127,9 @@ function ActiveUserForm({
           ))}
         </div>
       </RadioGroup>
-      <Button type="submit">{t('save')}</Button>
+      <Button type="submit" disabled={!selected}>
+        {t('save')}
+      </Button>
     </form>
   )
 }

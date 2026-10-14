@@ -35,7 +35,6 @@
     "ActiveUserModal": {
       "title": "Who are you?",
       "description": "Tell us which participant you are to let us customize how the information is displayed.",
-      "nobody": "I don’t want to select anyone",
       "save": "Save changes",
       "footer": "This setting can be changed later in the group settings."
     },
@@ -143,13 +142,8 @@
       "Jack": "Jack"
     },
     "Settings": {
-      "title": "Local settings",
-      "description": "These settings are set per-device, and are used to customize your experience.",
       "ActiveUserField": {
-        "label": "Active user",
-        "placeholder": "Select a participant",
-        "none": "None",
-        "description": "User used as default for paying expenses."
+        "label": "Who are you in this group?"
       },
       "save": "Save",
       "saving": "Saving…",
@@ -163,7 +157,6 @@
       "BY_PERCENTAGE": "By percentage",
       "BY_SHARES": "By shares",
       "shareOf": "Share of {name}",
-      "percentFooter": "{sum}% of 100% · {left}% left",
       "sharesFooter": "{count} shares",
       "zeroShares": "All shares must be higher than 0."
     }
@@ -201,8 +194,8 @@
       "create": "Create expense",
       "edit": "Edit expense",
       "TitleField": {
-        "label": "Expense title",
-        "placeholder": "Monday evening restaurant",
+        "label": "Expense name",
+        "placeholder": "Groceries, Uber, rent…",
         "description": "Enter a description for the expense."
       },
       "DateField": {
@@ -215,7 +208,7 @@
       },
       "categoryFieldDescription": "Select the expense category.",
       "paidByField": {
-        "label": "Paid by",
+        "label": "Who paid",
         "placeholder": "Select a participant",
         "description": "Select the participant who paid the expense."
       },
@@ -228,7 +221,7 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Paid for",
+        "title": "Who is part of this expense?",
         "description": "Select who the expense was paid for."
       },
       "splitModeDescription": "Select how to split the expense.",
@@ -294,7 +287,8 @@
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
-    "reimbursement": "Reimbursement"
+    "reimbursement": "Reimbursement",
+    "moreOptions": "More options"
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -488,7 +482,8 @@
     "paidForMin1": "The expense must be paid for at least one participant.",
     "noZeroShares": "All shares must be higher than 0.",
     "amountSum": "The amounts add up to {sum}, {difference} {direction, select, over {more} other {less}} than the expense amount ({amount}).",
-    "percentageSum": "The percentages add up to {sum}%, {difference}% {direction, select, over {more} other {less}} than 100%."
+    "percentageSum": "The percentages add up to {sum}%, {difference}% {direction, select, over {more} other {less}} than 100%.",
+    "useComma": "Use a comma for the cents."
   },
   "Categories": {
     "search": "Search category...",
@@ -578,50 +573,12 @@
     "reload": "Reload"
   },
   "QuickExpense": {
-    "title": "Add expense",
-    "back": "Back",
-    "save": "Save",
-    "withYou": "With you and:",
-    "allOf": "Everyone in {group}",
-    "chooseGroup": "Choose group",
-    "descriptionPlaceholder": "Enter a description",
-    "date": "Date",
-    "notes": "Note",
-    "notesPlaceholder": "Note (optional)",
-    "you": "you",
-    "youCap": "You",
-    "paidBySplit": "Paid by <strong>{payer}</strong> and split <strong>{split}</strong>",
-    "custom": "Paid by <strong>{payer}</strong> and split a custom way",
-    "fullAmount": "<strong>{payer}</strong> {payer, select, you {are} other {is}} owed the full amount",
-    "paidShortcut": "{payer} paid, split {split}",
-    "fullAmountShortcut": "{payer} {payer, select, You {are} other {is}} owed the full amount",
-    "more": "More options",
-    "fullForm": "Full form",
-    "descriptionRequired": "Enter a description (at least 2 characters).",
-    "amountInvalid": "Enter an amount above zero.",
-    "saveFailed": "Could not save. What you typed is still here; try again.",
-    "WhoAreYou": {
-      "title": "Who are you?",
-      "description": "Pick who you are in this group. Expenses are paid by you by default, and you can change it on each one."
-    },
-    "Adjust": {
-      "title": "Adjust split",
-      "paidBy": "Paid by {payer}",
-      "EVENLY": "Evenly",
-      "BY_AMOUNT": "Amounts",
-      "BY_PERCENTAGE": "Percentage",
-      "BY_SHARES": "Shares",
-      "all": "Everyone",
-      "footerEvenly": "{each}/person ({count, plural, one {# person} other {# people}})",
-      "footerAmount": "{done} of {total}",
-      "footerPercent": "{done}% of 100% — {left}% left",
-      "footerShares": "{count} shares",
-      "done": "Done"
-    },
-    "sheetTitle": "Who paid?",
-    "fab": "Add expense",
-    "splitEvenly": "evenly",
-    "splitShares": "by shares",
-    "amountSplitMismatch": "The split by amount does not add up to the expense amount. Tap the split to adjust it."
+    "fab": "Add expense"
+  },
+  "SplitGap": {
+    "percentOver": "Percentage exceeded by {difference}%",
+    "percentUnder": "{difference}% missing",
+    "amountOver": "Amount exceeded by {difference}",
+    "amountUnder": "{difference} missing"
   }
 }

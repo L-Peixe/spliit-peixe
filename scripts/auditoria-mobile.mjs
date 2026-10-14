@@ -23,9 +23,9 @@ await p.getByRole('button', { name: 'Create', exact: true }).click()
 await p.waitForURL(/\/groups\/[^/]+\/expenses/, { timeout: 60000 })
 const gid = /\/groups\/([^/]+)\/expenses/.exec(p.url())[1]
 for (const [t, a] of [
-  ['Supermercado Assaí Atacadista — compra do mês', '734.56'],
-  ['Uber', '23.90'],
-  ['Netflix', '55.90'],
+  ['Supermercado Assaí Atacadista — compra do mês', '734,56'],
+  ['Uber', '23,90'],
+  ['Netflix', '55,90'],
 ]) {
   await p.goto(`${B}/groups/${gid}/expenses/create`)
   await p

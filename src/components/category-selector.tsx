@@ -27,8 +27,6 @@ type Props = {
   /** Category ID to be selected by default. Overwriting this value will update current selection, too. */
   defaultValue: Category['id']
   isLoading: boolean
-  /** Trigger shows only the icon (one-screen expense). */
-  iconOnly?: boolean
 }
 
 export function CategorySelector({
@@ -36,7 +34,6 @@ export function CategorySelector({
   onValueChange,
   defaultValue,
   isLoading,
-  iconOnly,
 }: Props) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState<number>(defaultValue)
@@ -59,7 +56,6 @@ export function CategorySelector({
             category={selectedCategory}
             open={open}
             isLoading={isLoading}
-            iconOnly={iconOnly}
           />
         </PopoverTrigger>
         <PopoverContent className="p-0" align="start">
@@ -83,7 +79,6 @@ export function CategorySelector({
           category={selectedCategory}
           open={open}
           isLoading={isLoading}
-          iconOnly={iconOnly}
         />
       </DrawerTrigger>
       <DrawerContent className="p-0">
@@ -150,35 +145,12 @@ type CategoryButtonProps = {
   category: Category
   open: boolean
   isLoading: boolean
-  iconOnly?: boolean
 }
 const CategoryButton = forwardRef<HTMLButtonElement, CategoryButtonProps>(
   (
-    {
-      category,
-      open,
-      isLoading,
-      iconOnly,
-      ...props
-    }: ButtonProps & CategoryButtonProps,
+    { category, open, isLoading, ...props }: ButtonProps & CategoryButtonProps,
     ref,
   ) => {
-    const t = useTranslations('Categories')
-    if (iconOnly)
-      return (
-        <Button
-          variant="outline"
-          size="icon"
-          role="combobox"
-          aria-expanded={open}
-          aria-label={t(`${category.grouping}.${category.name}`)}
-          className="shrink-0"
-          ref={ref}
-          {...props}
-        >
-          <CategoryIcon category={category} className="w-5 h-5" />
-        </Button>
-      )
     const iconClassName = 'ml-2 h-4 w-4 shrink-0 opacity-50'
     return (
       <Button

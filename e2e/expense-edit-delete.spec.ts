@@ -47,7 +47,8 @@ test('edits an expense and recomputes balances', async ({ page }) => {
     .getByTestId('expense-card')
     .filter({ hasText: 'Groceries and wine' })
   await expect(card).toContainText(money(90))
-  await expect(card).toContainText('Paid by Alice for Alice, Bob')
+  // getGroup does not order participants (docs/APRENDIZADOS.md #11).
+  await expect(card).toContainText(/Paid by Alice for (Alice, Bob|Bob, Alice)/)
 
   // 90 split between Alice and Bob only.
   await openTab(page, 'Balances')

@@ -22,12 +22,12 @@ describe('expenseFormSchema, split by amount', () => {
   it('accepts amounts that add up to the expense amount', () => {
     expect(
       issueMessages(
-        byAmountExpense('524.34', [
-          '110.11',
-          '209.74',
-          '104.87',
-          '89.14',
-          '10.48',
+        byAmountExpense('524,34', [
+          '110,11',
+          '209,74',
+          '104,87',
+          '89,14',
+          '10,48',
         ]),
       ),
     ).toEqual([])
@@ -36,12 +36,12 @@ describe('expenseFormSchema, split by amount', () => {
   it('rejects amounts one cent off', () => {
     expect(
       issueMessages(
-        byAmountExpense('524.34', [
-          '110.11',
-          '209.74',
-          '104.87',
-          '89.14',
-          '10.49',
+        byAmountExpense('524,34', [
+          '110,11',
+          '209,74',
+          '104,87',
+          '89,14',
+          '10,49',
         ]),
       ),
     ).toEqual(['amountSum'])
@@ -143,5 +143,70 @@ describe('groupFormSchema, divisão padrão', () => {
       shares: [100, 100],
       mode: 'EVENLY',
     })
+  })
+})
+
+describe('números como no Brasil', () => {
+  const expense = (amount: string, shares: string[], splitMode = 'EVENLY') => ({
+    ...byAmountExpense(amount, shares),
+    splitMode,
+  })
+
+  it('valor com ponto de milhar e vírgula decimal', () => {
+    const result = expenseFormSchema.safeParse(expense('1.234,56', ['1']))
+    expect(result.data?.amount).toBe(1234.56)
+  })
+
+  it('12.50 pede vírgula em vez de virar outro número', () => {
+    expect(issueMessages(expense('12.50', ['1']))).toEqual(['useComma'])
+  })
+
+  it('valor vazio pede o valor', () => {
+    expect(issueMessages(expense('', ['1']))).toEqual(['amountRequired'])
+  })
+
+  it('porcentagens com vírgula viram ×100', () => {
+    const result = expenseFormSchema.safeParse(
+      expense('100', ['33,33', '33,33', '33,34'], 'BY_PERCENTAGE'),
+    )
+    expect(result.data?.paidFor.map((p) => p.shares)).toEqual([
+      3333, 3333, 3334,
+    ])
+  })
+
+  it('parte com ponto decimal pede vírgula', () => {
+    expect(
+      issueMessages(expense('100', ['50.5', '49,5'], 'BY_PERCENTAGE')),
+    ).toContain('useComma')
+  })
+
+  it('parte do grupo com vírgula', () => {
+    const result = groupFormSchema.safeParse({
+      name: 'Casa',
+      currency: 'R$',
+      currencyCode: 'BRL',
+      defaultSplitMode: 'BY_PERCENTAGE',
+      participants: [
+        { name: 'Ana', defaultShares: '25,5' },
+        { name: 'Beto', defaultShares: '74,5' },
+      ],
+    })
+    expect(result.data?.participants.map((p) => p.defaultShares)).toEqual([
+      2550, 7450,
+    ])
+  })
+
+  it('parte do grupo com ponto decimal pede vírgula', () => {
+    const result = groupFormSchema.safeParse({
+      name: 'Casa',
+      currency: 'R$',
+      currencyCode: 'BRL',
+      defaultSplitMode: 'BY_PERCENTAGE',
+      participants: [
+        { name: 'Ana', defaultShares: '25.5' },
+        { name: 'Beto', defaultShares: '74,5' },
+      ],
+    })
+    expect(result.error?.issues.map((i) => i.message)).toContain('useComma')
   })
 })

@@ -86,7 +86,12 @@ Quem participa desta despesa?
   já venceu, como fatura de cartão.
 - Não combina com recorrência nem com **divisão por valor** (valor em reais não serve para cada
   parcela) — a tela explica se escolher.
-- Editar uma parcela muda só ela. Parcelada só se escolhe ao criar.
+- Editar uma parcela muda só o **valor** dela; nome, categoria e divisão da última editada passam
+  para as próximas (elas nascem copiando a anterior). Mudar a **data** da parcela pendente move a
+  série (lançar hoje uma compra de 3 meses atrás traz as vencidas). Parcela não aceita divisão por
+  valor nem troca de recorrência. Parcelada só se escolhe ao criar.
+- **Limite aceito:** o total não se edita — digitou errado, apaga as parcelas e cria de novo.
+  Apagar a parcela mais recente antes da próxima nascer encerra a série.
 - **Dados (migration aditiva):** `Expense.installmentNumber Int?`, `installmentCount Int?`,
   `installmentTotal Int?` (centavos). O título da próxima troca o `(k/N)` do fim; se o usuário
   apagou o sufixo, acrescenta.
@@ -110,6 +115,8 @@ Quem participa desta despesa?
 Dois PRs: **1)** números + validação + "Quem é você" + tela única; **2)** parcelado.
 
 ## Changelog
+- **2026-10-14 — revisão do PR 2.** §5 diz o que a edição de uma parcela muda (data move a série; nome e divisão passam adiante) e os limites aceitos.
+- **2026-10-14 — PR 2 (§5, parcelado) implementado.** Plano `../plans/2026-10-14-parcelado.md`. Limite: 2 a 24 parcelas.
 - **2026-10-14 — PR 1 (§1–4) implementado.** Plano `../plans/2026-10-13-tela-unica.md`. Saíram junto os e2e de moeda por despesa (a função saiu da tela).
 - **2026-10-13 — criação.** Desenho aprovado em conversa depois de o Lucas usar A e B. Substitui
   a tela rápida da parte B (ADR-009).

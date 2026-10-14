@@ -194,6 +194,8 @@ export async function addExpense(
  * Collapsible unmounts its content, so those fields are not in the DOM before.
  */
 export async function openMoreOptions(page: Page): Promise<void> {
+  // The form loads after hydration; until then "open?" reads as no.
+  await expect(page.getByTestId('paid-by')).toBeVisible({ timeout: 30_000 })
   if (await page.locator('input[type="date"]').isVisible()) return
   await page.getByRole('button', { name: 'More options' }).click()
   await expect(page.locator('input[type="date"]')).toBeVisible()

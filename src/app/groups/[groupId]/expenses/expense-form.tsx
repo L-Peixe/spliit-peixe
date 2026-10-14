@@ -34,6 +34,7 @@ import { Currency, getCurrency } from '@/lib/currency'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { splittingFromGroup } from '@/lib/group-defaults'
 import { useActiveUser } from '@/lib/hooks'
+import { installmentAmounts } from '@/lib/installments'
 import { formatNumberBR, numberBR } from '@/lib/number-br'
 import { randomId } from '@/lib/random'
 import {
@@ -597,9 +598,12 @@ export function ExpenseForm({
                           <SelectItem value="BY_PERCENTAGE">
                             {t('SplitModeField.byPercentage')}
                           </SelectItem>
-                          <SelectItem value="BY_AMOUNT">
-                            {t('SplitModeField.byAmount')}
-                          </SelectItem>
+                          {/* The next installments' amounts would not fit it. */}
+                          {!expense?.installmentCount && (
+                            <SelectItem value="BY_AMOUNT">
+                              {t('SplitModeField.byAmount')}
+                            </SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -917,45 +921,113 @@ export function ExpenseForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="recurrenceRule"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        {t(`${sExpense}.recurrenceRule.label`)}
-                      </FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          form.setValue(
-                            'recurrenceRule',
-                            value as RecurrenceRule,
-                          )
-                        }}
-                        defaultValue={getSelectedRecurrenceRule(field)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="NONE" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="NONE">
-                            {t(`${sExpense}.recurrenceRule.none`)}
-                          </SelectItem>
-                          <SelectItem value="DAILY">
-                            {t(`${sExpense}.recurrenceRule.daily`)}
-                          </SelectItem>
-                          <SelectItem value="WEEKLY">
-                            {t(`${sExpense}.recurrenceRule.weekly`)}
-                          </SelectItem>
-                          <SelectItem value="MONTHLY">
-                            {t(`${sExpense}.recurrenceRule.monthly`)}
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {isCreate && (
+                  <FormField
+                    control={form.control}
+                    name="installmentCount"
+                    render={({ field }) => (
+                      <FormItem className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={(checked) =>
+                                field.onChange(checked ? 2 : undefined)
+                              }
+                            />
+                          </FormControl>
+                          <FormLabel>{t('installments.label')}</FormLabel>
+                        </div>
+                        {!!field.value && (
+                          <div className="flex flex-wrap items-center gap-3">
+                            <Select
+                              value={String(field.value)}
+                              onValueChange={(value) =>
+                                field.onChange(Number(value))
+                              }
+                            >
+                              <SelectTrigger
+                                className="w-24"
+                                aria-label={t('installments.count')}
+                              >
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Array.from(
+                                  { length: 23 },
+                                  (_, i) => i + 2,
+                                ).map((n) => (
+                                  <SelectItem key={n} value={String(n)}>
+                                    {n}x
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <span className="text-sm text-muted-foreground">
+                              {t('installments.each', {
+                                count: field.value,
+                                amount: formatCurrency(
+                                  groupCurrency,
+                                  installmentAmounts(
+                                    amountAsMinorUnits(
+                                      numberBR(form.watch('amount')) || 0,
+                                      groupCurrency,
+                                    ),
+                                    field.value,
+                                  ).at(-1)!,
+                                  locale,
+                                ),
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                {/* An installment repeats by itself: no recurrence to edit. */}
+                {!expense?.installmentCount && (
+                  <FormField
+                    control={form.control}
+                    name="recurrenceRule"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          {t(`${sExpense}.recurrenceRule.label`)}
+                        </FormLabel>
+                        <Select
+                          onValueChange={(value) => {
+                            form.setValue(
+                              'recurrenceRule',
+                              value as RecurrenceRule,
+                            )
+                          }}
+                          defaultValue={getSelectedRecurrenceRule(field)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="NONE" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NONE">
+                              {t(`${sExpense}.recurrenceRule.none`)}
+                            </SelectItem>
+                            <SelectItem value="DAILY">
+                              {t(`${sExpense}.recurrenceRule.daily`)}
+                            </SelectItem>
+                            <SelectItem value="WEEKLY">
+                              {t(`${sExpense}.recurrenceRule.weekly`)}
+                            </SelectItem>
+                            <SelectItem value="MONTHLY">
+                              {t(`${sExpense}.recurrenceRule.monthly`)}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
                 <FormField
                   control={form.control}
                   name="notes"

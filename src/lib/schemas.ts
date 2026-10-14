@@ -200,8 +200,19 @@ export const expenseFormSchema = z
       .default([]),
     notes: z.string().max(EXPENSE_NOTES_MAX, 'max5000').optional(),
     recurrenceRule: z.enum(RecurrenceRule).default('NONE'),
+    // Parcelado (ADR-011): only when creating; the amount is the total.
+    installmentCount: z.number().int().min(2).max(24).optional(),
   })
   .superRefine((expense, ctx) => {
+    if (expense.installmentCount) {
+      const issue = (message: string) =>
+        ctx.addIssue({ code: 'custom', message, path: ['installmentCount'] })
+      if (expense.recurrenceRule !== 'NONE') issue('installmentsWithRecurrence')
+      if (expense.splitMode === 'BY_AMOUNT') issue('installmentsByAmount')
+      // In the form's units (reais); the server gets cents and passes.
+      if (Math.round(expense.amount * 100) < expense.installmentCount)
+        issue('installmentTooSmall')
+    }
     switch (expense.splitMode) {
       case 'EVENLY':
         break // noop

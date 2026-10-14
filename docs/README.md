@@ -38,7 +38,7 @@ Levantado no código em 13/10/2026 (`registro/2026-10-13-levantamento-inicial.md
 | Grupos e saldos | ✅ grupo por link, saldos, sugestão de acerto, "quem é você" | Conta de usuário (é por aparelho, `localStorage`) |
 | Divisão | ✅ igualmente, por partes, por %, por valor | **Por ajuste**. Divisão padrão do grupo: `src/lib/group-defaults.ts` e `src/components/group-default-split.tsx` (parte A). Tela única de despesa: o formulário do Spliit reorganizado (`expenses/expense-form.tsx`), categoria pelo nome (`src/lib/suggest-category.ts`), rodapé da divisão que não fecha (`src/lib/split-gap.ts`) e o botão `src/components/add-expense-fab.tsx`. Número pt-BR em todo campo: `src/lib/number-br.ts` (ADR-010) |
 | Recorrente | ✅ diária, semanal, mensal — criada quando alguém abre o grupo | Anual, data de fim, aviso |
-| Parcelado | ❌ | Tudo |
+| Parcelado | ✅ total digitado, 1ª na hora, uma por mês pela recorrência mensal (`src/lib/installments.ts`, `createRecurringExpenses` em `src/lib/api.ts`, ADR-011) | Antecipar ou quitar parcelas |
 | Categorias | ✅ 44 fixas, em inglês na origem; sugestão por IA (OpenAI, opcional) | Categorias brasileiras; regra por palavra-chave sem IA; aprender com a correção |
 | Painel | ✅ gastos mensais por categoria, por grupo | Painel pessoal somando todos os grupos |
 | Recibo | ✅ foto do recibo lida por IA (OpenAI + S3, opcionais) | NFC-e pelo QR (dado oficial, sem IA) |
@@ -71,3 +71,4 @@ São a semente das categorias automáticas e da conciliação com o extrato.
 - **2026-10-13 — specs.** Pasta `specs/` (desenho aprovado) separada de `plans/` (passo a passo);
   item 7 da visão corrigido: padrão por grupo, sem padrão de casal embutido.
 - **2026-10-14 — tela única.** Linha da divisão aponta para a tela única e o parse pt-BR; a tela rápida da parte B saiu do código.
+- **2026-10-14 — parcelado.** Linha do parcelado preenchida.

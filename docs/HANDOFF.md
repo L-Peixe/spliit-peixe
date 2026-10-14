@@ -16,7 +16,8 @@ tela única de despesa (a tela rápida da parte B saiu). Falta o PR 2: parcelado
 | 1 | **Revisar e mergear o PR da tela única** (testar no preview pelo celular) | Lucas | O PR 2 |
 | 2 | **PR 2 — parcelado** (spec §5): plano (writing-plans) e código, a partir da `main` com o PR 1. Migration aditiva: conferir antes os alvos das variáveis do banco (`APRENDIZADOS.md` #7) | Claude | PR 1 mergeado |
 | 3 | **Parte C — foto da despesa:** brainstorming e spec (Blob privado já criado, ADR-007) | Claude + Lucas | Parcelado no ar |
-| 4 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
+| 4 | **Pequenos da revisão do PR 1** (não bloqueiam): editar o valor de despesa antiga em outra moeda mantém a conversão velha; erro de campo dentro de "Mais opções" fechado fica invisível; rodapé "valor excedido" aparece junto do "use vírgula"; remover quem é "você" deixa o aparelho sem ninguém | Claude | — |
+| 5 | Remote do original para o fork vivo: `git remote add upstream https://github.com/spliit-app/spliit` `[conferir se o proxy da sessão deixa buscar]` | Claude | — |
 
 ## Para a próxima sessão não pagar de novo
 

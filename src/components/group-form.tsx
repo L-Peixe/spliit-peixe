@@ -116,14 +116,16 @@ export function GroupForm({
       ? undefined
       : form.watch(`participants.${activeIndex}.name`)
 
+  // By id: a renamed participant is still you. Someone added in this edit has
+  // no id yet; ExpenseList maps `<groupId>-newUser` from the name once saved.
+  const activeId = activeIndex === -1 ? undefined : fields[activeIndex].id
   const updateActiveUser = () => {
     if (!activeUser) return
     if (group?.id) {
-      const participant = group.participants.find((p) => p.name === activeUser)
-      if (participant?.id) {
-        localStorage.setItem(`${group.id}-activeUser`, participant.id)
+      if (activeId) {
+        localStorage.setItem(`${group.id}-activeUser`, activeId)
       } else {
-        localStorage.setItem(`${group.id}-activeUser`, activeUser)
+        localStorage.setItem(`${group.id}-newUser`, activeUser)
       }
     } else {
       localStorage.setItem('newGroup-activeUser', activeUser)
@@ -142,11 +144,7 @@ export function GroupForm({
           } else {
             sendEvent({ event: 'group: create', props: {} }, `/groups`)
           }
-          await onSubmit(
-            values,
-            group?.participants.find((p) => p.name === activeUser)?.id ??
-              undefined,
-          )
+          await onSubmit(values, activeId)
         })}
       >
         <Card className="mb-4">

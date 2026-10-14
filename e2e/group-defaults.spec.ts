@@ -204,3 +204,29 @@ test('saving a default from an expense keeps people added meanwhile', async ({
 
   expect(await participantNames(page, groupId)).toEqual(['Ana', 'Beto', 'Caio'])
 })
+
+test('"Mark as paid" saves in a group split by percentage', async ({
+  page,
+}) => {
+  const groupId = await groupWithDefault(
+    ['Ana', 'Beto'],
+    page,
+    'By percentage',
+    {
+      Ana: '75',
+      Beto: '25',
+    },
+  )
+  await addExpense(page, groupId, {
+    title: 'Luz',
+    amount: '100',
+    paidBy: 'Ana',
+  })
+
+  await openTab(page, 'Balances')
+  await page.getByRole('link', { name: 'Mark as paid' }).click()
+  await page.waitForURL(/reimbursement=yes/, { timeout: 30_000 })
+  await expect(page.getByTestId('split-gap')).toHaveCount(0)
+  await page.getByRole('button', { name: 'Create', exact: true }).click()
+  await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
+})

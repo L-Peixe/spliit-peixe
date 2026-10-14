@@ -6,7 +6,7 @@ import {
   uniqueSuffix,
 } from './app'
 import { expect, test } from './fixtures'
-import { money } from './ui'
+import { fillStable, money } from './ui'
 
 // The rest of the suite seeds `newGroup-activeUser` so this dialog stays shut.
 // Here it is the subject, so the seeding is switched off.
@@ -127,4 +127,31 @@ test('creating a group asks who you are, the first name already picked', async (
   await page.getByRole('button', { name: 'Save', exact: true }).click()
   await page.goto(`/groups/${groupId}/expenses/create`)
   await expect(page.getByTestId('paid-by')).toContainText('Bob')
+})
+
+test('renaming who you are keeps you as the payer', async ({ page }) => {
+  const groupId = await createGroup(page, {
+    name: `E2E Rename ${uniqueSuffix()}`,
+    participants: ['Alice', 'Bob'],
+  })
+  await openTab(page, 'Settings')
+  const names = page.locator('input[name^="participants."][name$=".name"]')
+  await expect(names.first()).toBeVisible({ timeout: 30_000 })
+  const alice = (
+    await names.evaluateAll((els) =>
+      els.map((el) => (el as HTMLInputElement).value),
+    )
+  ).indexOf('Alice')
+  await page.getByLabel('Alice', { exact: true }).click()
+  await fillStable(
+    page.locator(`input[name="participants.${alice}.name"]`),
+    'Alicia',
+  )
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await expect(page.getByLabel('Alicia', { exact: true })).toBeChecked()
+
+  await page.goto(`/groups/${groupId}/expenses/create`)
+  await expect(page.getByTestId('paid-by')).toContainText('Alicia', {
+    timeout: 30_000,
+  })
 })

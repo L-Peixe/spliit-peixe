@@ -1,3 +1,6 @@
+> **Status final: ✅ executado (PR da branch `tela-unica`, 14/10/2026).** Plano morto — não é pendência.
+> O desenho vigente está no código e no changelog da spec.
+
 # PR 1 — números pt-BR, divisão que fecha, "Quem é você" e tela única · Plano
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -180,3 +183,4 @@ Valor formatado com `formatCurrency` (já sai `R$ 5,00`); porcentagem com `forma
 
 ## Changelog
 - **2026-10-13 — criação.** Plano do PR 1 da spec da tela única.
+- **2026-10-14 — executado.** Revisão independente achou 2 importantes (reembolso em grupo por %; "você" salvo pelo nome), corrigidos com e2e.

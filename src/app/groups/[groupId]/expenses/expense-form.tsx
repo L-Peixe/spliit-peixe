@@ -195,7 +195,8 @@ export function ExpenseForm({
                 : undefined,
             ],
             isReimbursement: true,
-            splitMode: defaultSplittingOptions.splitMode,
+            // One person takes it all: the group default (75/25, say) does not apply.
+            splitMode: 'EVENLY',
             saveDefaultSplittingOptions: false,
             documents: [],
             notes: '',

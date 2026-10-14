@@ -36,7 +36,7 @@ Levantado no código em 13/10/2026 (`registro/2026-10-13-levantamento-inicial.md
 | Precisamos de | No Spliit hoje | Falta |
 |---|---|---|
 | Grupos e saldos | ✅ grupo por link, saldos, sugestão de acerto, "quem é você" | Conta de usuário (é por aparelho, `localStorage`) |
-| Divisão | ✅ igualmente, por partes, por %, por valor | **Por ajuste**. Divisão padrão do grupo: `src/lib/group-defaults.ts` e `src/components/group-default-split.tsx` (parte A). Despesa em uma tela: `src/app/groups/[groupId]/expenses/quick/`, `src/lib/quick-expense.ts` e o botão `src/components/add-expense-fab.tsx` (parte B) — vai virar a tela única, ver `specs/2026-10-13-tela-unica-e-parcelado.md` |
+| Divisão | ✅ igualmente, por partes, por %, por valor | **Por ajuste**. Divisão padrão do grupo: `src/lib/group-defaults.ts` e `src/components/group-default-split.tsx` (parte A). Tela única de despesa: o formulário do Spliit reorganizado (`expenses/expense-form.tsx`), categoria pelo nome (`src/lib/suggest-category.ts`), rodapé da divisão que não fecha (`src/lib/split-gap.ts`) e o botão `src/components/add-expense-fab.tsx`. Número pt-BR em todo campo: `src/lib/number-br.ts` (ADR-010) |
 | Recorrente | ✅ diária, semanal, mensal — criada quando alguém abre o grupo | Anual, data de fim, aviso |
 | Parcelado | ❌ | Tudo |
 | Categorias | ✅ 44 fixas, em inglês na origem; sugestão por IA (OpenAI, opcional) | Categorias brasileiras; regra por palavra-chave sem IA; aprender com a correção |
@@ -70,3 +70,4 @@ São a semente das categorias automáticas e da conciliação com o extrato.
   tabela do que o Spliit já tem, levantada no código.
 - **2026-10-13 — specs.** Pasta `specs/` (desenho aprovado) separada de `plans/` (passo a passo);
   item 7 da visão corrigido: padrão por grupo, sem padrão de casal embutido.
+- **2026-10-14 — tela única.** Linha da divisão aponta para a tela única e o parse pt-BR; a tela rápida da parte B saiu do código.

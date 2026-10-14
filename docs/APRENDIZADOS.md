@@ -17,7 +17,7 @@
 | 7 | PR aberto mexeria na produção | Variáveis do banco na Vercel marcadas para *production* **e** *preview*, e o `postinstall` roda `prisma migrate deploy` no build | Preview com banco próprio (ADR-008). Conferir os alvos das variáveis com `filter_project_envs` (só nomes) antes de todo PR com migration | 13/10/2026 |
 | 8 | `WebFetch` em `vercel.com` falha com `ENOTFOUND` | Rede do ambiente | Doc da Vercel pelo conector: `search_vercel_documentation` | 13/10/2026 |
 | 9 | e2e: 32 de 52 falham por timeout | Rodar a suíte contra `next dev` com 4 workers (cada rota compila na hora) | Rodar contra `next build && next start` com `CI=1` (2 workers, 2 retries), como no CI. Chromium do container via `playwright.local.config.ts` (gitignored, só `launchOptions.executablePath`) | 13/10/2026 |
-| 10 | `pkill -f "next ..."` derruba o próprio comando (exit 144) | O padrão casa com a linha de comando do shell que roda o `pkill` | Parar o servidor num comando separado, sem o padrão no mesmo comando que sobe outro |  13/10/2026 |
+| 10 | `pkill -f "next ..."` derruba o próprio comando (exit 144) | O padrão casa com a linha de comando do shell que roda o `pkill` | Parar o servidor num comando separado, sem o padrão no mesmo comando que sobe outro. O `next start` roda como processo **`next-server`**: `pkill -f "next start"` não o pega e o build novo sobe com `EADDRINUSE` (a suíte roda contra o build velho) — matar pelo PID de `ps aux \| grep next-server` |  13/10/2026 · 14/10 (2×) |
 | 11 | e2e instável: participante "na posição 2" muda | `getGroup` não ordena os participantes | Achar participante pelo nome, nunca pelo índice `participants.N` | 13/10/2026 |
 | 12 | Neon API: `400 org_id is required` ao listar projetos | A chave é de organização | `GET /api/v2/users/me/organizations` dá o `org_id`; depois `projects?org_id=…`. Reset da `preview`: `POST …/branches/<id>/reset_to_parent` (já em `scripts/neon-preview.sh`). A doc em `neon.com` não abre daqui (`ENOTFOUND`) | 13/10/2026 |
 | 13 | Modo automático nega criar ramificação no Neon ("Modify Shared Resources") e listar variáveis da Vercel ("Credential Materialization") | Ações em recurso compartilhado/credencial pedem OK | Regra em `.claude/settings.json` + script estreito (`neon-preview.sh` só toca a `preview`). Ações fora dele ainda pedem o Lucas | 13/10/2026 |
@@ -27,6 +27,10 @@
 | 17 | "Tente de novo" que nunca dá certo ao salvar | O cliente aceitava o que o schema do servidor recusa (descrição de 1 letra, soma arredondada diferente, divisão por valor de outro valor) | Validar no cliente com **as mesmas regras e o mesmo arredondamento** do `src/lib/schemas.ts`; erro do servidor não pode virar mensagem genérica. Achado pela revisão independente, não pelos testes | 13/10/2026 |
 | 18 | Data salva um dia antes em fuso UTC+12 | `new Date(d + 'T12:00')` + coluna `@db.Date` (guarda só a data UTC) | `new Date('YYYY-MM-DD')` (meia-noite UTC), como o formulário do Spliit faz | 13/10/2026 |
 | 19 | `docker` não responde depois que o container reiniciou; `dockerd` morre com `timeout waiting for containerd` | Primeira subida do containerd lenta | Rodar `dockerd` de novo e esperar `docker info`; `docker start pg` reaproveita o banco | 13/10/2026 |
+| 20 | zod 4: erro próprio vira "Invalid input" | `ctx.addIssue` dentro de um ramo de `z.union([...])`: a união engole a mensagem do ramo | Transformar **fora** da união: `z.union([z.number(), z.string()]).transform(...)` (`src/lib/schemas.ts`) | 14/10/2026 |
+| 21 | e2e: o "Quem pagou" não vem com "você" logo depois de criar o grupo | O fixture re-semeia `newGroup-activeUser = None` a cada navegação, e a migração do `ExpenseList` sobrescreve o "você" | Spec que depende do "você" usa `test.use({ seedActiveUser: false })` (o app real não tem isso) | 14/10/2026 |
+| 22 | Sugestão de categoria para de funcionar depois da primeira | O `CategorySelector` do Spliit chama `onValueChange` também quando o valor muda por fora | Só conta como escolha à mão se `value !== field.value` | 14/10/2026 |
+| 23 | "(US$ NaN)" por pessoa com o valor vazio | `numberBR('')` é NaN, onde o `Number('')` antigo dava 0 | Prévia usa `numberBR(x) \|\| 0`. Achado no **print** da auditoria, não nos testes | 14/10/2026 |
 
 ## Auditoria mobile — a receita
 
@@ -38,4 +42,5 @@ Os seletores do grupo e da despesa estão em `e2e/app.ts`; o "pago por" é o
 `getByTestId('paid-by')` e é obrigatório para salvar.
 
 ## Changelog
+- **2026-10-14 — PR da tela única.** Entraram 20 a 23 (zod, fixture do e2e, seletor de categoria, NaN); #10 ganhou o `next-server`.
 - **2026-10-13 — partes A/B e tela única.** Entraram 12 a 19 (Neon, permissões, variáveis da Vercel, edição por script, i18n, validação cliente×servidor, data, Docker); #6 atualizado (com pedido do Lucas, passou).

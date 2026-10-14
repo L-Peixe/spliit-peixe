@@ -598,9 +598,12 @@ export function ExpenseForm({
                           <SelectItem value="BY_PERCENTAGE">
                             {t('SplitModeField.byPercentage')}
                           </SelectItem>
-                          <SelectItem value="BY_AMOUNT">
-                            {t('SplitModeField.byAmount')}
-                          </SelectItem>
+                          {/* The next installments' amounts would not fit it. */}
+                          {!expense?.installmentCount && (
+                            <SelectItem value="BY_AMOUNT">
+                              {t('SplitModeField.byAmount')}
+                            </SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                     </FormControl>

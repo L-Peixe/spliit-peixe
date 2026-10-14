@@ -3,6 +3,7 @@ import {
   daysAgo,
   expenseCard,
   EXPENSES_URL,
+  openExpense,
   openMoreOptions,
   uniqueSuffix,
 } from './app'
@@ -58,4 +59,32 @@ test('not with a split by amount', async ({ page }) => {
     page.getByText(/Installments do not combine with a split by amount/),
   ).toBeVisible()
   await expect(page).toHaveURL(/\/expenses\/create/)
+})
+
+test('moving the 1st back in time brings the due ones', async ({ page }) => {
+  await newExpense(page)
+  await page.getByRole('button', { name: 'Create', exact: true }).click()
+  await page.waitForURL(EXPENSES_URL, { timeout: 30_000 })
+  await expect(page.getByTestId('expense-card')).toHaveCount(1)
+
+  await openExpense(page, 'Geladeira (1/3)')
+  await openMoreOptions(page)
+  await fillStable(page.locator('input[type="date"]'), daysAgo(70))
+  await page.getByRole('button', { name: 'Save', exact: true }).click()
+  await page.waitForURL(EXPENSES_URL, { timeout: 30_000 })
+  await page.reload()
+  await expect(expenseCard(page, 'Geladeira (3/3)')).toBeVisible()
+  await expect(page.getByTestId('expense-card')).toHaveCount(3)
+})
+
+test('an installment is not offered a split by amount', async ({ page }) => {
+  await newExpense(page)
+  await page.getByRole('button', { name: 'Create', exact: true }).click()
+  await page.waitForURL(EXPENSES_URL, { timeout: 30_000 })
+  await openExpense(page, 'Geladeira (1/3)')
+  await page.getByTestId('split-mode').click()
+  await expect(
+    page.getByRole('option', { name: /By percentage/ }),
+  ).toBeVisible()
+  await expect(page.getByRole('option', { name: /By amount/ })).toHaveCount(0)
 })

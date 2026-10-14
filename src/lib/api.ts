@@ -204,6 +204,15 @@ export async function updateExpense(
       throw new Error(`Invalid participant ID: ${participant}`)
   }
 
+  // An installment keeps its monthly rhythm (the form hides it), and a split
+  // by amount would not fit the next installments' amounts.
+  const isInstallment = !!existingExpense.installmentCount
+  if (isInstallment && expenseFormValues.splitMode === 'BY_AMOUNT')
+    throw new Error('An installment cannot be split by amount')
+  if (isInstallment)
+    expenseFormValues.recurrenceRule =
+      existingExpense.recurrenceRule ?? RecurrenceRule.NONE
+
   await logActivity(groupId, ActivityType.UPDATE_EXPENSE, {
     participantId,
     expenseId,
@@ -216,10 +225,17 @@ export async function updateExpense(
     // Delete the existing RecurrenceExpenseLink only if it has not been acted upon yet
     existingExpense.recurringExpenseLink?.nextExpenseCreatedAt === null
 
+  // Moving an installment's date moves the next one with it.
+  const isMoveInstallments =
+    isInstallment &&
+    existingExpense.recurringExpenseLink?.nextExpenseCreatedAt === null &&
+    existingExpense.expenseDate.getTime() !==
+      expenseFormValues.expenseDate.getTime()
   const isUpdateRecurrenceExpenseLink =
-    existingExpense.recurrenceRule !== expenseFormValues.recurrenceRule &&
-    // Update the exisiting RecurrenceExpenseLink only if it has not been acted upon yet
-    existingExpense.recurringExpenseLink?.nextExpenseCreatedAt === null
+    isMoveInstallments ||
+    (existingExpense.recurrenceRule !== expenseFormValues.recurrenceRule &&
+      // Update the exisiting RecurrenceExpenseLink only if it has not been acted upon yet
+      existingExpense.recurringExpenseLink?.nextExpenseCreatedAt === null)
   const isCreateRecurrenceExpenseLink =
     existingExpense.recurrenceRule === RecurrenceRule.NONE &&
     expenseFormValues.recurrenceRule !== RecurrenceRule.NONE &&
@@ -234,7 +250,9 @@ export async function updateExpense(
 
   const updatedRecurrenceExpenseLinkNextExpenseDate = calculateNextDate(
     expenseFormValues.recurrenceRule as RecurrenceRule,
-    existingExpense.expenseDate,
+    isMoveInstallments
+      ? expenseFormValues.expenseDate
+      : existingExpense.expenseDate,
   )
 
   return prisma.expense.update({

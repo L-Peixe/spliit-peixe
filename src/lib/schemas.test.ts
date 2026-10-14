@@ -210,3 +210,41 @@ describe('números como no Brasil', () => {
     expect(result.error?.issues.map((i) => i.message)).toContain('useComma')
   })
 })
+
+describe('parcelado', () => {
+  const installment = (extra: Record<string, unknown>) =>
+    issueMessages({
+      ...byAmountExpense('100', ['1', '1']),
+      splitMode: 'EVENLY',
+      installmentCount: 3,
+      ...extra,
+    })
+
+  it('aceita parcelada com divisão igual', () => {
+    expect(installment({})).toEqual([])
+  })
+
+  it('não combina com recorrência', () => {
+    expect(installment({ recurrenceRule: 'MONTHLY' })).toEqual([
+      'installmentsWithRecurrence',
+    ])
+  })
+
+  it('não combina com divisão por valor', () => {
+    expect(
+      installment({
+        splitMode: 'BY_AMOUNT',
+        paidFor: [{ participant: 'a', shares: '100' }],
+      }),
+    ).toEqual(['installmentsByAmount'])
+  })
+
+  it('cada parcela tem pelo menos um centavo', () => {
+    expect(installment({ amount: '0,02' })).toEqual(['installmentTooSmall'])
+  })
+
+  it('de 2 a 24 parcelas', () => {
+    expect(installment({ installmentCount: 1 })).not.toEqual([])
+    expect(installment({ installmentCount: 25 })).not.toEqual([])
+  })
+})

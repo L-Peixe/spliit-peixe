@@ -288,7 +288,12 @@
     "saving": "Saving…",
     "cancel": "Cancel",
     "reimbursement": "Reimbursement",
-    "moreOptions": "More options"
+    "moreOptions": "More options",
+    "installments": {
+      "label": "In installments",
+      "count": "Number of installments",
+      "each": "{count}x of {amount}"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -483,7 +488,10 @@
     "noZeroShares": "All shares must be higher than 0.",
     "amountSum": "The amounts add up to {sum}, {difference} {direction, select, over {more} other {less}} than the expense amount ({amount}).",
     "percentageSum": "The percentages add up to {sum}%, {difference}% {direction, select, over {more} other {less}} than 100%.",
-    "useComma": "Use a comma for the cents."
+    "useComma": "Use a comma for the cents.",
+    "installmentsWithRecurrence": "Installments do not combine with recurrence: they already repeat every month.",
+    "installmentsByAmount": "Installments do not combine with a split by amount: an amount does not fit every installment. Use evenly, percentage or shares.",
+    "installmentTooSmall": "Each installment needs at least one cent."
   },
   "Categories": {
     "search": "Search category...",

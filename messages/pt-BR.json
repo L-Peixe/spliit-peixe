@@ -256,7 +256,12 @@
     "originalAmountField": {
       "label": "Valor a converter"
     },
-    "moreOptions": "Mais opções"
+    "moreOptions": "Mais opções",
+    "installments": {
+      "label": "Parcelada",
+      "count": "Número de parcelas",
+      "each": "{count}x de {amount}"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -369,7 +374,10 @@
     "amountSum": "A soma dos valores deve ser igual ao valor da despesa.",
     "percentageSum": "A soma das porcentagens deve ser igual a 100.",
     "ratePositive": "A taxa deve ser maior que zero.",
-    "useComma": "Use vírgula para os centavos."
+    "useComma": "Use vírgula para os centavos.",
+    "installmentsWithRecurrence": "Parcelada não combina com recorrência: as parcelas já se repetem todo mês.",
+    "installmentsByAmount": "Parcelada não combina com divisão por valor: o valor em reais não serve para cada parcela. Use igualmente, porcentagem ou partes.",
+    "installmentTooSmall": "Cada parcela precisa de pelo menos um centavo."
   },
   "Categories": {
     "search": "Pesquisar categoria...",

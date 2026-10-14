@@ -67,6 +67,12 @@ model Expense {
   recurrenceRule         RecurrenceRule?       @default(NONE)
   recurringExpenseLink   RecurringExpenseLink?
   recurringExpenseLinkId String?
+
+  // Parcelado (ADR-011): k of N, and the total in minor units the next
+  // installment's amount comes from.
+  installmentNumber Int?
+  installmentCount  Int?
+  installmentTotal  Int?
 }
 
 model ExpenseDocument {

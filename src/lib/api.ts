@@ -5,6 +5,7 @@ import {
   RecurringExpenseLink,
 } from '@/generated/prisma/client'
 import { describeGroupChanges } from '@/lib/group-defaults'
+import { installmentAmounts, installmentTitle } from '@/lib/installments'
 import { prisma } from '@/lib/prisma'
 import { randomId } from '@/lib/random'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
@@ -61,10 +62,20 @@ export async function createExpense(
     data: expenseFormValues.title,
   })
 
-  const isCreateRecurrence =
-    expenseFormValues.recurrenceRule !== RecurrenceRule.NONE
+  // Parcelado: the 1st installment now, the others by the monthly recurrence.
+  const count = expenseFormValues.installmentCount
+  const installments = count
+    ? installmentAmounts(expenseFormValues.amount, count)
+    : undefined
+  if (installments?.some((amount) => amount <= 0))
+    throw new Error('Each installment must be at least one minor unit')
+  const recurrenceRule = installments
+    ? RecurrenceRule.MONTHLY
+    : expenseFormValues.recurrenceRule
+
+  const isCreateRecurrence = recurrenceRule !== RecurrenceRule.NONE
   const recurringExpenseLinkPayload = createPayloadForNewRecurringExpenseLink(
-    expenseFormValues.recurrenceRule as RecurrenceRule,
+    recurrenceRule as RecurrenceRule,
     expenseFormValues.expenseDate,
     groupId,
   )
@@ -75,14 +86,21 @@ export async function createExpense(
       groupId,
       expenseDate: expenseFormValues.expenseDate,
       categoryId: expenseFormValues.category,
-      amount: expenseFormValues.amount,
+      amount: installments?.[0] ?? expenseFormValues.amount,
       originalAmount: expenseFormValues.originalAmount,
       originalCurrency: expenseFormValues.originalCurrency,
       conversionRate: expenseFormValues.conversionRate,
-      title: expenseFormValues.title,
+      title: count
+        ? installmentTitle(expenseFormValues.title, 1, count)
+        : expenseFormValues.title,
+      ...(count && {
+        installmentNumber: 1,
+        installmentCount: count,
+        installmentTotal: expenseFormValues.amount,
+      }),
       paidById: expenseFormValues.paidBy,
       splitMode: expenseFormValues.splitMode,
-      recurrenceRule: expenseFormValues.recurrenceRule,
+      recurrenceRule,
       recurringExpenseLink: {
         ...(isCreateRecurrence
           ? {
@@ -591,6 +609,17 @@ async function createRecurringExpenses() {
         ...destructeredCurrentExpenseRecord
       } = currentExpenseRecord
 
+      // Parcelado: amount and title of installment k+1 come from the total;
+      // the last one has no recurrence left.
+      const { installmentNumber, installmentCount, installmentTotal } =
+        currentExpenseRecord
+      const installment =
+        installmentNumber && installmentCount && installmentTotal !== null
+          ? installmentNumber + 1
+          : undefined
+      if (installment && installment > installmentCount!) break
+      const isLastInstallment = installment === installmentCount
+
       // Use a transacton to ensure that the only one expense is created for the RecurringExpenseLink
       // just in case two clients are processing the same RecurringExpenseLink at the same time
       const newExpense = await prisma
@@ -617,13 +646,29 @@ async function createRecurringExpenses() {
               },
               id: newExpenseId,
               expenseDate: newExpenseDate,
-              recurringExpenseLink: {
-                create: {
-                  groupId: currentExpenseRecord.groupId,
-                  id: newRecurringExpenseLinkId,
-                  nextExpenseDate: newRecurringExpenseNextExpenseDate,
-                },
-              },
+              ...(installment && {
+                amount: installmentAmounts(
+                  installmentTotal!,
+                  installmentCount!,
+                )[installment - 1],
+                title: installmentTitle(
+                  currentExpenseRecord.title,
+                  installment,
+                  installmentCount!,
+                ),
+                installmentNumber: installment,
+              }),
+              ...(isLastInstallment
+                ? { recurrenceRule: RecurrenceRule.NONE }
+                : {
+                    recurringExpenseLink: {
+                      create: {
+                        groupId: currentExpenseRecord.groupId,
+                        id: newRecurringExpenseLinkId,
+                        nextExpenseDate: newRecurringExpenseNextExpenseDate,
+                      },
+                    },
+                  }),
             },
             // Ensure that the same information is available on the returned record that was created
             include: {
@@ -657,7 +702,7 @@ async function createRecurringExpenses() {
         })
 
       // If the new expense failed to be created, break out of the while-loop
-      if (newExpense === null) break
+      if (newExpense === null || isLastInstallment) break
 
       // Set the values for the next iteration of the for-loop in case multiple recurring Expenses need to be created
       currentExpenseRecord = newExpense

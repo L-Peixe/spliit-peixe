@@ -98,7 +98,7 @@ export async function addExpense(
   groupId: string,
   expense: {
     title: string
-    /** As typed, e.g. '90' or '12.34'. */
+    /** As typed in Brazil, e.g. '90' or '12,34' (ADR-010). */
     amount: string
     /** Participant name. */
     paidBy: string
@@ -127,6 +127,8 @@ export async function addExpense(
   // amount changes, which would wipe values set beforehand.
   await fillStable(page.locator('input[name="amount"]'), expense.amount)
   await selectRadixOption(page, page.getByTestId('paid-by'), expense.paidBy)
+
+  if (expense.date || expense.recurrence) await openMoreOptions(page)
 
   if (expense.date) {
     // The date input spreads no RHF field, so it has no name attribute.
@@ -163,11 +165,6 @@ export async function addExpense(
 
   const splitMode = expense.splitMode ?? 'EVENLY'
   if (splitMode !== 'EVENLY') {
-    // Radix Collapsible unmounts its content, so the Split mode select does
-    // not exist in the DOM until this is opened.
-    await page
-      .getByRole('button', { name: /Advanced splitting options/ })
-      .click()
     await selectRadixOption(
       page,
       page.getByTestId('split-mode'),
@@ -190,6 +187,16 @@ export async function addExpense(
 
   await submit.click()
   await page.waitForURL(EXPENSES_URL, { timeout: 30_000 })
+}
+
+/**
+ * Opens "More options" on the expense form (date, recurrence, notes). Radix
+ * Collapsible unmounts its content, so those fields are not in the DOM before.
+ */
+export async function openMoreOptions(page: Page): Promise<void> {
+  if (await page.locator('input[type="date"]').isVisible()) return
+  await page.getByRole('button', { name: 'More options' }).click()
+  await expect(page.locator('input[type="date"]')).toBeVisible()
 }
 
 export async function openTab(page: Page, tab: GroupTab): Promise<void> {

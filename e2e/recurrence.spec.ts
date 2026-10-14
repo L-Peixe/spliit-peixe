@@ -5,6 +5,7 @@ import {
   expenseCard,
   EXPENSES_URL,
   openExpense,
+  openMoreOptions,
   uniqueSuffix,
 } from './app'
 import { expect, test } from './fixtures'
@@ -36,6 +37,7 @@ test('round-trips a recurrence rule through the form', async ({ page }) => {
   await page.waitForURL(EXPENSES_URL, { timeout: 30_000 })
 
   await openExpense(page, 'Netflix')
+  await openMoreOptions(page)
   await expect(
     fieldByLabel(page, 'Expense Recurrence').getByRole('combobox'),
   ).toContainText('None')

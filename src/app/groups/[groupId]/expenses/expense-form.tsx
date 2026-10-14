@@ -755,7 +755,8 @@ export function ExpenseForm({
                                             // the balances tab once saved.
                                             id: expense?.id ?? expenseId,
                                             amount: amountAsMinorUnits(
-                                              numberBR(form.watch('amount')),
+                                              numberBR(form.watch('amount')) ||
+                                                0,
                                               groupCurrency,
                                             ), // Convert to cents
                                             paidFor: field.value.map(
@@ -768,15 +769,16 @@ export function ExpenseForm({
                                                 shares:
                                                   form.watch('splitMode') ===
                                                   'BY_PERCENTAGE'
-                                                    ? numberBR(shares) * 100 // Convert percentage to basis points (e.g., 50% -> 5000)
+                                                    ? (numberBR(shares) || 0) *
+                                                      100 // Convert percentage to basis points (e.g., 50% -> 5000)
                                                     : form.watch(
                                                           'splitMode',
                                                         ) === 'BY_AMOUNT'
                                                       ? amountAsMinorUnits(
-                                                          numberBR(shares),
+                                                          numberBR(shares) || 0,
                                                           groupCurrency,
                                                         )
-                                                      : numberBR(shares),
+                                                      : numberBR(shares) || 0,
                                                 expenseId: '',
                                                 participantId: '',
                                               }),

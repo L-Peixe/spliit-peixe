@@ -95,8 +95,12 @@ test('keeps a by-amount split that skips a participant when reopened', async ({
   })
 
   await openExpense(page, 'Taxi')
-  await expect(paidForRow(page, 'Alice').getByRole('textbox')).toHaveValue('60')
-  await expect(paidForRow(page, 'Bob').getByRole('textbox')).toHaveValue('40')
+  await expect(paidForRow(page, 'Alice').getByRole('textbox')).toHaveValue(
+    '60,00',
+  )
+  await expect(paidForRow(page, 'Bob').getByRole('textbox')).toHaveValue(
+    '40,00',
+  )
   await expect(paidForRow(page, 'Carol').getByRole('checkbox')).toHaveAttribute(
     'aria-checked',
     'false',
@@ -127,7 +131,6 @@ test('rejects percentages that do not add up to 100', async ({ page }) => {
   await fillStable(page.locator('input[name="title"]'), 'Invalid')
   await fillStable(page.locator('input[name="amount"]'), '100')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Alice')
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   await selectRadixOption(page, page.getByTestId('split-mode'), /By percentage/)
 
   const shares: Record<string, string> = { Alice: '50', Bob: '30', Carol: '10' }
@@ -137,9 +140,7 @@ test('rejects percentages that do not add up to 100', async ({ page }) => {
 
   await submit.click()
 
-  await expect(
-    page.getByText('The percentages add up to 90%, 10% less than 100%.'),
-  ).toBeVisible()
+  await expect(page.getByText('10% missing', { exact: true })).toBeVisible()
   await expect(page).toHaveURL(/\/expenses\/create/)
 })
 
@@ -156,14 +157,13 @@ test('names the difference when amounts do not add up', async ({ page }) => {
   await fillStable(page.locator('input[name="title"]'), 'Off by a cent')
   await fillStable(page.locator('input[name="amount"]'), '100')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Alice')
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   await selectRadixOption(page, page.getByTestId('split-mode'), /By amount/)
 
   // Receipt rounding: the last amount is one cent too high.
   const shares: Record<string, string> = {
     Alice: '50',
     Bob: '30',
-    Carol: '20.01',
+    Carol: '20,01',
   }
   for (const name of Object.keys(shares)) {
     await fillStable(paidForRow(page, name).getByRole('textbox'), shares[name])
@@ -171,9 +171,7 @@ test('names the difference when amounts do not add up', async ({ page }) => {
 
   await submit.click()
 
-  const message = page.getByText(
-    `The amounts add up to ${money(100.01)}, ${money(0.01)} more than the expense amount (${money(100)}).`,
-  )
+  const message = page.getByText(`Amount exceeded by ${money(0.01)}`)
   await expect(message).toBeVisible()
   await expect(page).toHaveURL(/\/expenses\/create/)
 
@@ -198,7 +196,6 @@ test('offers the remainder again when an amount is cleared', async ({
   await fillStable(page.locator('input[name="title"]'), 'Cleared')
   await fillStable(page.locator('input[name="amount"]'), '100')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Alice')
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   await selectRadixOption(page, page.getByTestId('split-mode'), /By amount/)
 
   await fillStable(paidForRow(page, 'Alice').getByRole('textbox'), '50')
@@ -208,7 +205,7 @@ test('offers the remainder again when an amount is cleared', async ({
   const carol = paidForRow(page, 'Carol').getByRole('textbox')
   await fillStable(carol, '25')
   await fillStable(carol, '')
-  await expect(carol).toHaveAttribute('placeholder', '20.00')
+  await expect(carol).toHaveAttribute('placeholder', '20,00')
 
   // The suggestion is what gets saved when the input is left empty.
   await submit.click()
@@ -242,9 +239,9 @@ test('saves an even split with the leftover cent where it was previewed', async 
   // hash cannot hide a regression.
   let bobOwes = 0
   for (const [title, amount, low, high] of [
-    ['Dinner', '16.57', 8.28, 8.29],
-    ['Taxi', '20.01', 10, 10.01],
-    ['Coffee', '9.99', 4.99, 5],
+    ['Dinner', '16,57', 8.28, 8.29],
+    ['Taxi', '20,01', 10, 10.01],
+    ['Coffee', '9,99', 4.99, 5],
   ] as const) {
     await page.goto(`/groups/${groupId}/expenses/create`)
     const submit = page.getByRole('button', { name: 'Create', exact: true })
@@ -296,7 +293,7 @@ test('can retry a create whose response was lost', async ({ page }) => {
   await expect(submit).toBeVisible({ timeout: 30_000 })
 
   await fillStable(page.locator('input[name="title"]'), 'Lost')
-  await fillStable(page.locator('input[name="amount"]'), '16.57')
+  await fillStable(page.locator('input[name="amount"]'), '16,57')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Alice')
 
   // The form mints the expense id itself so its split preview can be exact.

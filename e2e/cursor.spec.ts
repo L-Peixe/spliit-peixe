@@ -25,9 +25,9 @@ test('every clickable element shows the pointing hand', async ({ page }) => {
   expect(await cursorsThatAreNotPointer(page)).toEqual([])
 
   const groupId = /\/groups\/([^/]+)\//.exec(page.url())![1]
-  await page.goto(`/groups/${groupId}/expenses/quick`)
-  expect(await cursorsThatAreNotPointer(page)).toEqual([])
-  await page.getByRole('button', { name: 'Ana', exact: true }).click()
-  await expect(page.getByTestId('split-button')).toBeVisible()
+  await page.goto(`/groups/${groupId}/expenses/create`)
+  await expect(page.getByTestId('paid-by')).toBeVisible({ timeout: 30_000 })
+  await page.getByRole('button', { name: 'More options' }).click()
+  await expect(page.locator('input[type="date"]')).toBeVisible()
   expect(await cursorsThatAreNotPointer(page)).toEqual([])
 })

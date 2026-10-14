@@ -166,7 +166,6 @@ test('an expense split by amount cannot become the group default', async ({
     participants: ['Ana', 'Beto'],
   })
   await page.goto(`/groups/${groupId}/expenses/create`)
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   const saveAsDefault = page.getByText('Save as default splitting options')
   await expect(saveAsDefault).toBeVisible()
   await selectRadixOption(page, page.getByTestId('split-mode'), /By amount/)
@@ -199,7 +198,6 @@ test('saving a default from an expense keeps people added meanwhile', async ({
   await fillStable(page.locator('input[name="title"]'), 'Mercado')
   await fillStable(page.locator('input[name="amount"]'), '100')
   await selectRadixOption(page, page.getByTestId('paid-by'), 'Ana')
-  await page.getByRole('button', { name: /Advanced splitting options/ }).click()
   await page.getByText('Save as default splitting options').click()
   await create.click()
   await page.waitForURL(/\/groups\/[^/]+\/expenses(\?|$)/, { timeout: 30_000 })
